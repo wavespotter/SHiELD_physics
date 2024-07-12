@@ -1,0 +1,96 @@
+name: Compile SHiELD and run tests
+
+# This GitHub Action Workflow is running on the cloud shieldphysicsciintel cluster
+# The tests are run inside of a container with the following software/libraries:
+# -intel: 2023.2.0
+# -hdf5: 1.14.0
+# -netcdf-c: 4.9.2
+# -netcdf-fortran: 4.6.0
+# -cmake
+# -libyaml
+
+on:
+  pull_request:
+    branches:
+      - main
+
+#this should cancel in progress ci runs for the same PR 
+#(e.g. a second commit on the same PR comes in while CI is still running)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+    
+jobs:
+  checkout:
+    if: github.repository == 'NOAA-GFDL/SHiELD_physics'
+    runs-on: [shieldphysicsciintel]
+    name: Checkout Code
+    steps:
+    # It can take a long time (5-15 minutes) to spinup nodes
+    # so this salloc will prompt 46 nodes to startup and stay active for 20 min
+    # this is enough nodes for the first 17 tests to run in parallel, and we
+    # have 17 runners configured.
+#    - run: salloc --partition=p2 -N 46 -J $GITHUB_SHA sleep 20m &
+    - run: /contrib/fv3/SHiELD_physics_CI/checkout.sh -b $GITHUB_REF -h $GITHUB_SHA
+    
+  build:
+    if: github.repository == 'NOAA-GFDL/SHiELD_physics'
+    runs-on: [shieldphysicsciintel]
+    name: SHiELD build
+    needs: [checkout]
+    strategy:
+      fail-fast: true
+      max-parallel: 17
+      matrix:
+        runscript: [/contrib/fv3/SHiELD_physics_CI/compile.sh]
+        config: [shield]
+        hydro: [nh]
+        bit: [32bit]
+        mode: [repro]
+    steps:
+      - env:
+          RUNSCRIPT: ${{ matrix.runscript }}
+          CONFIG: ${{ matrix.config }}
+          HYDRO: ${{ matrix.hydro }}
+          BIT: ${{ matrix.bit }}
+          MODE: ${{ matrix.mode }}
+        run: $RUNSCRIPT -b $GITHUB_REF -h $GITHUB_SHA -c $CONFIG --hydro $HYDRO --bit $BIT -m $MODE
+        
+#  test:
+#    if: github.repository == 'NOAA-GFDL/SHiELD_physics'
+#    runs-on: [shieldphysicsciintel]
+#    name: SHiELD test suite
+#    needs: [checkout, build]
+#    strategy:
+#      fail-fast: false
+#      max-parallel: 17
+#      matrix:
+#        runscript: [/contrib/fv3/SHiELD_physics_CI/run_test.sh]
+#        argument:
+#          - test1
+#          - test2
+#    steps:
+#      # This will end the slurm job started in the checkout job
+#      - run: scancel -n $GITHUB_SHA
+#      - env:
+#          RUNSCRIPT: ${{ matrix.runscript }}
+#          ARG1: ${{ matrix.argument }}
+#        run: $RUNSCRIPT -t $ARG1 -b $GITHUB_REF -h $GITHUB_SHA
+#  shutdown:
+#    if: always() && github.repository == 'NOAA-GFDL/SHiELD_physics'
+#    runs-on: [shieldphysicsciintel]
+#    name: Shutdown Processes
+#    needs: [checkout, build, test]
+#    needs: [checkout, build]
+#    strategy:
+#      fail-fast: false
+#      max-parallel: 17
+#      matrix:
+#        test:
+#          - test2
+#          - test2
+#    steps:
+#      - run: scancel -n $GITHUB_SHA
+#      - env:
+#          JOB: ${{ github.sha }}_${{ matrix.test }}
+#        run: scancel -n $JOB

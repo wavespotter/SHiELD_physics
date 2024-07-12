@@ -15,7 +15,7 @@ module noahmp_tables
     integer :: i
     integer, private, parameter :: mvt   = 30 ! use 30 instead of 27
     integer, private, parameter :: mband = 2
-    integer, private, parameter :: msc   = 8
+    integer, private, parameter :: msc   = 20
     integer, private, parameter :: max_soiltyp = 30
     integer, private, parameter :: slcats = 30
     real (kind=kind_phys) :: slope_table(9)                     !slope factor for soil drainage
@@ -88,11 +88,20 @@ module noahmp_tables
      &                               0.30, 0.30, 0.00, 0.00, 0.00, 0.00,     &
      &                               0.00, 0.00, 0.00, 0.00, 0.00, 0.00 /
 
+    ! C. He 12/17/2020: optimized MFSNO values dependent on land type based on evaluation with SNOTEL SWE and MODIS SCF, surface albedo
     real (kind=kind_phys) :: mfsno_table(mvt)       !snowmelt curve parameter ()
-      data  ( mfsno_table(i),i=1,mvt) /  2.50, 2.50, 2.50, 2.50, 2.50, 2.50, &
-     &                               2.50, 2.50, 2.50, 2.50, 2.50, 2.50,     &
-     &                               2.50, 2.50, 2.50, 2.50, 2.50, 2.50,     &
-     &                               2.50, 2.50, 0.00, 0.00, 0.00, 0.00,     &
+      data  ( mfsno_table(i),i=1,mvt) /  1.00, 1.00, 1.00, 1.00, 1.00, 2.00, &
+     &                               2.00, 2.00, 2.00, 2.00, 3.00, 3.00,     &
+     &                               4.00, 4.00, 2.50, 3.00, 3.00, 3.50,     &
+     &                               3.50, 3.50, 0.00, 0.00, 0.00, 0.00,     &
+     &                               0.00, 0.00, 0.00, 0.00, 0.00, 0.00 /
+
+    ! C. He 12/17/2020: optimized snow cover factor (m) in SCF formulation to replace original constant 2.5*z0,z0=0.002m, based on evaluation with SNOTEL SWE and MODIS SCF, surface albedo
+    real (kind=kind_phys) :: scffac_table(mvt)       !snow cover factor (m)
+      data  ( scffac_table(i),i=1,mvt) /  0.005, 0.005, 0.005, 0.005, 0.005, 0.008, &
+     &                               0.008, 0.010, 0.010, 0.010, 0.010, 0.007,      &
+     &                               0.021, 0.013, 0.015, 0.008, 0.015, 0.015,      &
+     &                               0.015, 0.015, 0.00, 0.00, 0.00, 0.00,          &
      &                               0.00, 0.00, 0.00, 0.00, 0.00, 0.00 /
 
 !
@@ -732,12 +741,12 @@ module noahmp_tables
 
 !    &_______________________________________________________________________&
     real (kind=kind_phys) :: albsat_table(msc,mband)   !saturated soil albedos: 1=vis, 2=nir
-    data(albsat_table(i,1),i=1,8)/0.15,0.11,0.10,0.09,0.08,0.07,0.06,0.05/
-    data(albsat_table(i,2),i=1,8)/0.30,0.22,0.20,0.18,0.16,0.14,0.12,0.10/
+    data(albsat_table(i,1),i=1,20)/0.25,0.23,0.21,0.20,0.19,0.18,0.17,0.16,0.15,0.14,0.13,0.12,0.11,0.10,0.09,0.08,0.07,0.06,0.05,0.04/
+    data(albsat_table(i,2),i=1,20)/0.50,0.46,0.42,0.40,0.38,0.36,0.34,0.32,0.30,0.28,0.26,0.24,0.22,0.20,0.18,0.16,0.14,0.12,0.10,0.08/
 
     real (kind=kind_phys) :: albdry_table(msc,mband)   !dry soil albedos: 1=vis, 2=nir
-    data(albdry_table(i,1),i=1,8)/0.27,0.22,0.20,0.18,0.16,0.14,0.12,0.10/
-    data(albdry_table(i,2),i=1,8)/0.54,0.44,0.40,0.36,0.32,0.28,0.24,0.20/
+    data(albdry_table(i,1),i=1,20)/0.36,0.34,0.32,0.31,0.30,0.29,0.28,0.27,0.26,0.25,0.24,0.23,0.22,0.20,0.18,0.16,0.14,0.12,0.10,0.08/
+    data(albdry_table(i,2),i=1,20)/0.61,0.57,0.53,0.51,0.49,0.48,0.45,0.43,0.41,0.39,0.37,0.35,0.33,0.31,0.29,0.27,0.25,0.23,0.21,0.16/
 
     real (kind=kind_phys) :: albice_table(mband)       !albedo land ice: 1=vis, 2=nir
     data (albice_table(i),i=1,mband) /0.80, 0.55/
