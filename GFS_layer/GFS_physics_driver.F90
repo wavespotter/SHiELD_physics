@@ -1304,6 +1304,7 @@ module module_physics_driver
             work3, islmsk, Tbd%phy_f2d(1,Model%num_p2d), flag_iter,     &
 !  ---  outputs:
              qss, Diag%cmm, Diag%chh, gflx, evap, hflx, ep1d)
+            endif
 
         endif       ! if ( nstf_name(1) > 0 ) then
 
