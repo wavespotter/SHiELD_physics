@@ -13,7 +13,6 @@
      &                    prsl1,prslki,islimsk,
      &                    stress,fm,fh,
      &                    charnock,                             ! Sofar added Spring 2023
-     &                    rhoa,                                 ! Sofar added 9/22/23
      &                    u10m_array,v10m_array,                ! Sofar added 11/17/23
      &                    u10n,v10n,                            ! Sofar added 9/22/23
      &                    fm10_neutral,                         ! Sofar added 10/19/23
@@ -45,7 +44,7 @@
      &,                                    prsl1, prslki, stress
      &,                                    fm, fh
      &,                                    charnock                     ! Sofar added Spring 2023
-     &,                                    rhoa, u10n, v10n             ! Sofar added 9/22/23
+     &,                                    u10n, v10n                   ! Sofar added 9/22/23
      &,                                    u10m_array, v10m_array       ! Sofar added 11/17/23
      &,                                    ustar, wind 
      &,                                    ddvel
@@ -68,7 +67,6 @@
      &                     hl1,    hl12,   pm,     ph,  pm10,  ph2, rat,
      &                     thv1,   tvs,    z1i,    z0, zt, z0max, ztmax,
      &                     fms,    fhs,    hl0,    hl0inf, hlinf,
-     &                     tv1,                                   ! Sofar added 9/22/23
      &                     hl110,  hlt,    hltinf, olinf,
      &                     restar, czilc,  tem1,   tem2,
      &                     u10m, v10m, ws10m, ws10m_moon,         !kgao
@@ -98,8 +96,6 @@
      &                + max(0.0, min(ddvel(i), 30.0)), 1.0)
           tem1    = 1.0 + rvrdm1 * max(q1(i),1.e-8)
           thv1    = t1(i) * prslki(i) * tem1
-          tv1     = t1(i) * tem1                        ! Sofar added 9/22/23
-          rhoa(i)   = prsl1(i) / (rd*tv1)               ! Sofar added 9/22/23
           tvs     = 0.5 * (tsurf(i)+tskin(i)) * tem1
           qs1     = fpvs(t1(i))
           qs1     = max(1.0e-8, eps * qs1 / (prsl1(i) + epsm1 * qs1))

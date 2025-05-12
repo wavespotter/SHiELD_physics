@@ -1,19 +1,21 @@
       subroutine sfc_diag(im,ps,u1,v1,t1,q1,
      &                    tskin,qsurf,f10m,u10m,v10m,t2m,q2m,
      &                    prslki,evap,fm,fh,fm10,fh2,
-     &                    fm10_neutral,u10n,v10n)    ! Sofar added: 10/19/23
+     &                    fm10_neutral,u10n,v10n, rhoa)    ! Sofar added: 10/19/23
 !
       use machine , only : kind_phys
       use funcphys, only : fpvs
       use physcons, grav => con_g,  cp => con_cp,
-     &              eps => con_eps, epsm1 => con_epsm1
+     &              eps => con_eps, epsm1 => con_epsm1,
+     &              rvrdm1 => con_fvirt, rd => con_rd
+
       implicit none
 !
       integer              im
       real, dimension(im) :: ps,   u1,   v1,   t1,  q1,  tskin,  qsurf,
      &                       f10m, u10m, v10m, t2m, q2m, prslki, evap,
      &                       fm,   fh,   fm10, fh2, 
-     &                       fm10_neutral, u10n, v10n    ! Added by Sofar: 10/19/23
+     &                       fm10_neutral, u10n, v10n, rhoa    ! Added by Sofar: 10/19/23
 !
 !     locals
 !
@@ -60,6 +62,8 @@
         qss    = fpvs(t2m(i))
         qss    = eps * qss / (ps(i) + epsm1 * qss)
         q2m(i) = min(q2m(i),qss)
+        rhoa(i) = 
+     &  ps(i) / (rd * t2m(i) * (1.0 + rvrdm1 * max(q2m(i),1.e-8)))
       enddo
 
       return
