@@ -14,7 +14,7 @@
      &                    stress,fm,fh,
      &                    charnock,                             
      &                    rhoa,                                 
-     &                    fm10_neutral, fm_neutral,                
+     &                    fm10_neutral,               
      &                    ustar,wind,ddvel,fm10,fh2,
      &                    sigmaf,vegtype,shdmax,ivegsrc,
      &                    tsurf,flag_iter,redrag,

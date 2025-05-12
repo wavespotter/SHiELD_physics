@@ -479,7 +479,7 @@ module module_physics_driver
            doms, psautco_l, prautco_l, ocalnirbm_cpl, ocalnirdf_cpl,    &
            ocalvisbm_cpl, ocalvisdf_cpl, dtzm, temrain1, t2mmp, q2mp,   &
            !--  For coupling with wave model                              ! Sofar added 10/20/23
-           fm10_neutral, fm_neutral,                                    & ! Sofar added 10/20/23
+           fm10_neutral,                                                & ! Sofar added 10/20/23
            !--- coupling inputs for physics
            dtsfc_cice, dqsfc_cice, dusfc_cice, dvsfc_cice, ulwsfc_cice, &
            tisfc_cice, tsea_cice, hice_cice, fice_cice,                 &
@@ -1216,7 +1216,7 @@ module module_physics_driver
                  Sfcprop%ffmm,  Sfcprop%ffhh,                       &
                  Sfcprop%charnock,                                  &  
                  Sfcprop%rhoa,                                      &                
-                 fm10_neutral, fm_neutral,                          &  
+                 fm10_neutral,                                      &  
                  Sfcprop%uustar,                                    &
                  wind,  Tbd%phy_f2d(1,Model%num_p2d), fm10, fh2,    &
                  sigmaf, vegtype, Sfcprop%shdmax, Model%ivegsrc,    &
@@ -1519,7 +1519,7 @@ module module_physics_driver
               Sfcprop%t2m, Sfcprop%q2m, work3, evap,           &
               Sfcprop%ffmm, Sfcprop%ffhh, fm10, fh2, &
               Sfcprop%u10m, Sfcprop%v10m,&
-              fm10_neutral, fm_neutral, Diag%u10n, Diag%v10n, &
+              fm10_neutral, Diag%u10n, Diag%v10n, &
               Sfcprop%u10n, Sfcprop%v10n)  
       !endif
 
@@ -3876,7 +3876,7 @@ module module_physics_driver
                        Sfcprop%q2m, work3, evap, Sfcprop%ffmm,          &
                        Sfcprop%ffhh, fm10, fh2, &
                        Sfcprop%u10m, Sfcprop%v10m,&
-                       fm10_neutral, fm_neutral, Diag%u10n, Diag%v10n, &
+                       fm10_neutral, Diag%u10n, Diag%v10n, &
                        Sfcprop%u10n, Sfcprop%v10n)  
 
         if (Model%lssav) then
