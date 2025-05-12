@@ -282,7 +282,7 @@
             ! option 4: Moon et al 2007 under high winds (same as in HiRAM)
                ws10m_moon = 2.458 + ustar(i)*(20.255-0.56*ustar(i))  ! Eq(7) Moon et al. 2007 
                if ( ws10m_moon > 20. ) then
-                  call cal_z0_moon(ws10m_moon, z0, charnock(i))
+                  call cal_z0_moon(ws10m_moon, z0)
                   z0 = max(min(z0, z0s_max), 1.e-7) ! must apply limiter here
                endif
             endif
@@ -473,7 +473,7 @@
 
 ! =======================================================================
 
-      subroutine cal_z0_moon(ws10m, z0, charnock)
+      subroutine cal_z0_moon(ws10m, z0M)
       ! coded by Kun Gao (Kun.Gao@noaa.gov)
       use machine , only : kind_phys
       use physcons, grav => con_g
@@ -482,7 +482,7 @@
       real(kind=kind_phys) :: ustar_th, z0_adj 
 
       real(kind=kind_phys), parameter ::
-!     &          charnock=.014
+     &          charnock=.014
      &          wind_th_moon = 20. 
      &,         a = 0.56
      &,         b = -20.255
