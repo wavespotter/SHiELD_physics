@@ -1191,7 +1191,24 @@ module module_physics_driver
          !else
 !!$         endif
 
-            if (Model%sfc_gfdl) then
+            ! kgao - need a logic to ensure sfc_coupled is true when coupled with MOM6
+            if (Model%sfc_coupled) then
+! a version of sfc_diff from coupling with MOM6 by kgao  
+! Sfcprop%uustar,Sfcprop%zorl,Sfcprop%ztrl are not updated over ocean points
+            call sfc_diff_coupled(im,Statein%pgr, Statein%ugrs, Statein%vgrs,&
+                 Statein%tgrs, Statein%qgrs, Diag%zlvl, Sfcprop%snowd, &
+                 Sfcprop%tsfc, Sfcprop%zorl, Sfcprop%ztrl, cd,      &
+                 cdq, rb, Statein%prsl(1,1), work3, islmsk, stress, &
+                 Sfcprop%ffmm,  Sfcprop%ffhh, Sfcprop%uustar,       &
+                 wind,  Tbd%phy_f2d(1,Model%num_p2d), fm10, fh2,    &
+                 sigmaf, vegtype, Sfcprop%shdmax, Model%ivegsrc,    &
+                 tsurf, flag_iter, Model%alpha_stable, Model%alpha_unstable) 
+!                , Model%redrag, Model%z0s_max,     &
+                 !Model%do_z0_moon, Model%do_z0_hwrf15,              &
+                 !Model%do_z0_hwrf17, Model%do_z0_hwrf17_hwonly,     &
+                 !Model%wind_th_hwrf)
+
+            else if (Model%sfc_gfdl) then
 ! a new and more flexible version of sfc_diff by kgao
             call sfc_diff_gfdl(im,Statein%pgr, Statein%ugrs, Statein%vgrs,&
                  Statein%tgrs, Statein%qgrs, Diag%zlvl, Sfcprop%snowd, &
@@ -1209,7 +1226,7 @@ module module_physics_driver
                  tsurf, flag_iter, Model%redrag, Model%z0s_max,     &
                  Model%do_z0_moon, Model%do_z0_hwrf15,              &
                  Model%do_z0_hwrf17, Model%do_z0_hwrf17_hwonly,     &
-                 Model%wind_th_hwrf)
+                 Model%wind_th_hwrf, Model%alpha_stable, Model%alpha_unstable)
             else
 ! GFS original sfc_diff modified by kgao 
             call sfc_diff (im,Statein%pgr, Statein%ugrs, Statein%vgrs,&
