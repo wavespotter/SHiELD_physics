@@ -473,7 +473,7 @@
 
 ! =======================================================================
 
-      subroutine cal_z0_moon(ws10m, z0M)
+      subroutine cal_z0_moon(ws10m, z0)
       ! coded by Kun Gao (Kun.Gao@noaa.gov)
       use machine , only : kind_phys
       use physcons, grav => con_g
