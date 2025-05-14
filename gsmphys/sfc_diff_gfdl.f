@@ -523,11 +523,16 @@
      &       cm, ch, stress, ustar)
 
 ! --- input 
+! ilsimask - land/sea/ice mask
 ! z1     - lowest model level height 
 ! snwdph - surface snow thickness 
 ! wind   - wind speed at lowest model layer
 ! thv1   - virtual potential temp at lowest model layer
 ! tvs    - surface temp
+! alpha_stable - tuning parameter (inverse crit. Richarson number) in dimensinless shear
+!                and scalar gradient; stable case
+! alpha_unstable - tuning parameter in dimensionless wind shear; unstable case
+! tune_ocean_surface_layer - if true, use alphas to tune surface layer over oceans
 ! z0max  - surface roughness length for momentum
 ! ztmax  - surface roughness length for heat
 !
