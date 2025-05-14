@@ -56,7 +56,8 @@
      &     kinver,xkzm_mo,xkzm_ho,xkzm_ml,xkzm_hl,xkzm_mi,xkzm_hi,
      &     xkzm_s,xkzinv,rlmx,zolcru,cs0,
      &     do_dk_hb19,xkgdx,dspfac,bl_upfr,bl_dnfr,dkt_out,
-     &     flux_up, flux_dn)
+     &     flux_up, flux_dn, 
+     &     alpha_stable, alpha_unstable, tune_ocean_surface_layer)
 !
       use machine  , only : kind_phys
       use funcphys , only : fpvs
@@ -73,7 +74,8 @@
 !
       real(kind=kind_phys) delt, xkzm_mo, xkzm_ho, xkzm_s, dspfac,
      &                     bl_upfr, bl_dnfr, xkzm_ml, xkzm_hl,
-     &                     xkzm_mi, xkzm_hi
+     &                     xkzm_mi, xkzm_hi, alpha_stable, 
+     &                     alpha_unstable
       real(kind=kind_phys) dv(im,km),     du(im,km),
      &                     tdt(im,km),    rtg(im,km,ntrac),
      &                     u1(ix,km),     v1(ix,km),
@@ -97,7 +99,7 @@
      &                     rtg_in(im,km,ntrac)
 ! kgao note - q1 and rtg are local var now 
 !
-      logical dspheat, do_dk_hb19
+      logical dspheat, do_dk_hb19, tune_ocean_surface_layer
 !          flag for tke dissipative heating
       real(kind=kind_phys)::dkt_out(im,km),flux_up(im,km),flux_dn(im,km)
 !
@@ -619,24 +621,10 @@
 !
 !     compute similarity parameters
 !
-      do i=1,im
-         zol(i) = max(rbsoil(i)*fm(i)*fm(i)/fh(i),rimin)
-         if(sfcflg(i)) then
-           zol(i) = min(zol(i),-zfmin)
-         else
-           zol(i) = max(zol(i),zfmin)
-         endif
-!
-         zol1 = zol(i)*sfcfrac*hpbl(i)/zl(i,1)
-         if(sfcflg(i)) then
-           tem     = 1.0 / (1. - aphi16*zol1)
-           phih(i) = sqrt(tem)
-           phim(i) = sqrt(phih(i))
-         else
-           phim(i) = 1. + aphi5*zol1
-           phih(i) = phim(i)
-         endif
-      enddo
+      call get_similarity_parameters(im, rbsoil, fm, fh, rimin,
+     &  sfcflg, zfmin, sfcfrac, hpbl, zl(1:im,1), 
+     &  aphi16, aphi5, alpha_unstable, alpha_stable, 
+     &  tune_ocean_surface_layer, phim, phih, zol)
 !
       do i=1,im
         if(pblflg(i)) then

@@ -93,7 +93,8 @@
      &   prsi,del,prsl,prslk,phii,phil,delt,dspheat,                    &
      &   dusfc,dvsfc,dtsfc,dqsfc,hpbl,hgamt,hgamq,dkt,                  &
      &   kinver,xkzm_m,xkzm_h,xkzm_s,lprnt,ipr,                         &
-     &   xkzminv,moninq_fac)
+     &   xkzminv,moninq_fac, alpha_stable, alpha_unstable,              &
+     &   tune_ocean_surface_layer)
 !
       use machine  , only : kind_phys
       use funcphys , only : fpvs
@@ -103,11 +104,12 @@
 !
 !     arguments
 !
-      logical lprnt
+      logical lprnt, tune_ocean_surface_layer
       integer ipr
       integer ix, im, km, ntrac, ntcw, kpbl(im), kinver(im)
 !
-      real(kind=kind_phys) delt, xkzm_m, xkzm_h, xkzm_s
+      real(kind=kind_phys) delt, xkzm_m, xkzm_h, xkzm_s, alpha_stable, 
+     &    alpha_unstable
       real(kind=kind_phys) dv(im,km),     du(im,km),                    &
      &                     tau(im,km),    rtg(im,km,ntrac),             &
      &                     u1(ix,km),     v1(ix,km),                    &
@@ -512,24 +514,12 @@ c
 !!  \f[
 !!  w_s = (u_*^3 + 7\epsilon k w_*^3)^{1/3}
 !!  \f]
+      call get_similarity_parameters(im, rbsoil, fm, fh, rimin,
+     &  sfcflg, zfmin, sfcfrac, hpbl, zl(1:im,1), 
+     &  aphi16, aphi5, alpha_unstable, alpha_stable, 
+     &  tune_ocean_surface_layer, phim, phih, zol)
+
       do i=1,im
-         zol(i) = max(rbsoil(i)*fm(i)*fm(i)/fh(i),rimin)
-         if(sfcflg(i)) then
-           zol(i) = min(zol(i),-zfmin)
-         else
-           zol(i) = max(zol(i),zfmin)
-         endif
-         zol1 = zol(i)*sfcfrac*hpbl(i)/zl(i,1)
-         if(sfcflg(i)) then
-!          phim(i) = (1.-aphi16*zol1)**(-1./4.)
-!          phih(i) = (1.-aphi16*zol1)**(-1./2.)
-           tem     = 1.0 / (1. - aphi16*zol1)
-           phih(i) = sqrt(tem)
-           phim(i) = sqrt(phih(i))
-         else
-           phim(i) = 1. + aphi5*zol1
-           phih(i) = phim(i)
-         endif
          wscale(i) = ustar(i)/phim(i)
          ustmin(i) = ustar(i)/aphi5
          wscale(i) = max(wscale(i),ustmin(i))
