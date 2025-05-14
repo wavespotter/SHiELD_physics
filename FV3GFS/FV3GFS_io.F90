@@ -4812,7 +4812,7 @@ module FV3GFS_io_mod
     Diag(idx)%intpl_method = 'bilinear'
     allocate (Diag(idx)%data(nblks))
     do nb = 1,nblks
-      Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%zeta(:)
+      Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%zol(:)
     enddo
 
     idx = idx + 1
