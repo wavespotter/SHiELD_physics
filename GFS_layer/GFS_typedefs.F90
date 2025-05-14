@@ -680,9 +680,9 @@ module GFS_typedefs
     logical              :: do_z0_hwrf17    !< flag for using z0 scheme in 2017 HWRF (kgao)
     logical              :: do_z0_hwrf17_hwonly !< flag for using z0 scheme in 2017 HWRF only under high wind (kgao)
     real(kind=kind_phys) :: wind_th_hwrf    !< wind speed threshold when z0 level off as in HWRF (kgao)
-    real(kind=kind_phys) :: alpha_stable    !< description TBD
-    real(kind=kind_phys) :: alpha_unstable  !< description TBD
-    logical              :: tune_ocean_surface_layer !< if true, use alphas above to modify the SL similarity profiles over oceans
+    real(kind=kind_phys) :: alpha_stable    !< tuning parameter for the dimensionless momentum and scalar gradient function in the surface layer
+    real(kind=kind_phys) :: alpha_unstable  !< tuning parameter for the dimensionless momentum gradient function in the surface layer
+    logical              :: tune_ocean_surface_layer !< if true, use alphas above to modify the surface layer dimensionless gradients over oceans
     logical              :: hybedmf         !< flag for hybrid edmf pbl scheme
     logical              :: myj_pbl         !< flag for NAM MYJ tke scheme
     logical              :: ysupbl          !< flag for ysu pbl scheme (version in WRFV3.8)
@@ -2404,9 +2404,9 @@ end subroutine overrides_create
     logical              :: do_z0_hwrf17   = .false.                  !< flag for using z0 scheme in 2017 HWRF
     logical              :: do_z0_hwrf17_hwonly = .false.             !< flag for using z0 scheme in 2017 HWRF only under high wind
     real(kind=kind_phys) :: wind_th_hwrf   = 33.                      !< wind speed threshold when z0 level off as in HWRF
-    real(kind=kind_phys) :: alpha_stable   = 5.                       !< TBD
-    real(kind=kind_phys) :: alpha_unstable = 16.                      !< TBD
-    logical              :: tune_ocean_surface_layer = .false.        !< if true, use alphas above to modify the SL similarity profiles over oceans
+    real(kind=kind_phys) :: alpha_stable   = 5.                       !< tuning parameter for the dimensionless momentum and scalar gradient function in the surface layer
+    real(kind=kind_phys) :: alpha_unstable = 16.                      !< tuning parameter for the dimensionless momentum gradient function in the surface layer
+    logical              :: tune_ocean_surface_layer = .false.        !< if true, use alphas above to modify the surface layer dimensionless gradients over oceans
     logical              :: hybedmf        = .false.                  !< flag for hybrid edmf pbl scheme
     logical              :: myj_pbl        = .false.                  !< flag for NAM MYJ tke-based scheme
     logical              :: ysupbl         = .false.                  !< flag for hybrid edmf pbl scheme
