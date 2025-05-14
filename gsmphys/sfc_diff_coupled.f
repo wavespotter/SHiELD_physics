@@ -5,7 +5,7 @@
      &                    ustar,wind,ddvel,fm10,fh2,
      &                    sigmaf,vegtype,shdmax,ivegsrc,
      &                    tsurf,flag_iter, alpha_stable, alpha_unstable,
-     &                    tune_ocean_surface_layer) 
+     &                    tune_ocean_surface_layer, zol) 
 !                         ,redrag,
 !     &                    z0s_max)
 !     &                    do_z0_moon, do_z0_hwrf15, do_z0_hwrf17,
@@ -29,7 +29,7 @@
      &,                                    fm, fh, ustar, wind, ddvel
      &,                                    fm10, fh2, sigmaf, shdmax
      &,                                    tsurf, snwdph, alpha_stable 
-     &,                                    alpha_unstable
+     &,                                    alpha_unstable, zol
 
       integer, dimension(im)             ::vegtype, islimsk
 
@@ -151,7 +151,7 @@
      &        ztmax, tvs,
      &        alpha_stable, alpha_unstable, tune_ocean_surface_layer,
      &        rb(i), fm(i), fh(i), fm10(i), fh2(i),
-     &        cm(i), ch(i), stress(i), ustar(i))
+     &        cm(i), ch(i), stress(i), ustar(i), zol(i))
 
           elseif (islimsk(i) == 0) then
 
@@ -175,7 +175,7 @@
      &        ztmax, tvs,
      &        alpha_stable, alpha_unstable, tune_ocean_surface_layer,
      &        rb(i), fm(i), fh(i), fm10(i), fh2(i),
-     &        cm(i), ch(i), tem1, tem2) !stress(i), ustar(i))
+     &        cm(i), ch(i), tem1, tem2, zol(i)) !stress(i), ustar(i))
 
             ! kgao: use ustar from coupler to get stress
             stress(i) =  ustar(i) * ustar(i)
