@@ -1578,7 +1578,7 @@ c-----------------------------------------------------------------------
 
       ! local 
       integer i
-      real :: zol1
+      real(kind=kind_phys) :: zol1
         
         do i=1,im
            zol(i) = max(rbsoilv*fm(i)*fm(i)/fh(i),rimin)
