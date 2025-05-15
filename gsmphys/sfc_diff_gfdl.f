@@ -741,6 +741,6 @@
         Rz = (1. - alpha * zeta)**0.25
         R0 = (1. - alpha * zeta0)**0.25
         psi_m = log((1. + Rz)**2. * (1. + Rz**2.) / ((1. + R0)**2.
-     &  *(1. + R0**2.))) + 2. * np.arctan(R0) - 2. * np.arctan(Rz)
+     &  *(1. + R0**2.))) + 2. * atan(R0) - 2. * atan(Rz)
         return
       end subroutine
