@@ -1202,7 +1202,9 @@ module module_physics_driver
                  Sfcprop%ffmm,  Sfcprop%ffhh, Sfcprop%uustar,       &
                  wind,  Tbd%phy_f2d(1,Model%num_p2d), fm10, fh2,    &
                  sigmaf, vegtype, Sfcprop%shdmax, Model%ivegsrc,    &
-                 tsurf, flag_iter) !, Model%redrag, Model%z0s_max,     &
+                 tsurf, flag_iter,                                  &
+                 Model%alpha_stable, Model%alpha_unstable, Model%tune_ocean_surface_layer) 
+!                , Model%redrag, Model%z0s_max,     &
                  !Model%do_z0_moon, Model%do_z0_hwrf15,              &
                  !Model%do_z0_hwrf17, Model%do_z0_hwrf17_hwonly,     &
                  !Model%wind_th_hwrf)
@@ -1225,7 +1227,8 @@ module module_physics_driver
                  tsurf, flag_iter, Model%redrag, Model%z0s_max,     &
                  Model%do_z0_moon, Model%do_z0_hwrf15,              &
                  Model%do_z0_hwrf17, Model%do_z0_hwrf17_hwonly,     &
-                 Model%wind_th_hwrf)
+                 Model%wind_th_hwrf,                                &
+                 Model%alpha_stable, Model%alpha_unstable, Model%tune_ocean_surface_layer)
             else
 ! GFS original sfc_diff modified by kgao 
             call sfc_diff (im,Statein%pgr, Statein%ugrs, Statein%vgrs,&
@@ -1709,7 +1712,8 @@ module module_physics_driver
                          Model%dspheat, dusfc1, dvsfc1, dtsfc1, dqsfc1, Diag%hpbl,&
                          gamt, gamq, dkt, kinver, Model%xkzm_m, Model%xkzm_h,     &
                          Model%xkzm_s, lprnt, ipr,                                &
-                         Model%xkzminv, Model%moninq_fac)
+                         Model%xkzminv, Model%moninq_fac, Model%alpha_stable,     &
+                         Model%alpha_unstable, Model%tune_ocean_surface_layer)
 !     if (lprnt)  write(0,*)' dtdtm=',(dtdt(ipr,k),k=1,15)
 !     if (lprnt)  write(0,*)' dqdtm=',(dqdt(ipr,k,1),k=1,15)
 
@@ -1731,7 +1735,9 @@ module module_physics_driver
                    Model%xkzm_ml, Model%xkzm_hl, Model%xkzm_mi, Model%xkzm_hi,  & 
                    Model%xkzm_s,  Model%xkzminv, Model%do_dk_hb19,              &
                    Model%xkzm_lim, Model%xkgdx,                                 &
-                   Model%rlmn, Model%rlmx, Model%cap_k0_land, dkt)
+                   Model%rlmn, Model%rlmx, Model%cap_k0_land, dkt,              &
+                   Model%alpha_stable, Model%alpha_unstable,                    &
+                   Model%tune_ocean_surface_layer)
 
              elseif (Model%isatmedmf == 1) then   
                 do i=1,im
@@ -1758,7 +1764,8 @@ module module_physics_driver
                        Model%xkzm_s, Model%xkzminv, Model%rlmx, Model%zolcru,       &
                        Model%cs0, Model%do_dk_hb19, Model%xkgdx,                    &
                        Model%dspfac, Model%bl_upfr, Model%bl_dnfr, dkt,             &
-                       flux_cg, flux_en) !cg as up and en as down
+                       flux_cg, flux_en, Model%alpha_stable, Model%alpha_unstable,  &
+                       Model%tune_ocean_surface_layer) !cg as up and en as down
         endif
 
         elseif (Model%ysupbl) then

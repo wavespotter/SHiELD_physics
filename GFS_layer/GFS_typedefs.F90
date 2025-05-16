@@ -680,6 +680,9 @@ module GFS_typedefs
     logical              :: do_z0_hwrf17    !< flag for using z0 scheme in 2017 HWRF (kgao)
     logical              :: do_z0_hwrf17_hwonly !< flag for using z0 scheme in 2017 HWRF only under high wind (kgao)
     real(kind=kind_phys) :: wind_th_hwrf    !< wind speed threshold when z0 level off as in HWRF (kgao)
+    real(kind=kind_phys) :: alpha_stable    !< tuning parameter for the dimensionless momentum and scalar gradient function in the surface layer
+    real(kind=kind_phys) :: alpha_unstable  !< tuning parameter for the dimensionless momentum gradient function in the surface layer
+    logical              :: tune_ocean_surface_layer !< if true, use alphas above to modify the surface layer dimensionless gradients over oceans
     logical              :: hybedmf         !< flag for hybrid edmf pbl scheme
     logical              :: myj_pbl         !< flag for NAM MYJ tke scheme
     logical              :: ysupbl          !< flag for ysu pbl scheme (version in WRFV3.8)
@@ -2401,6 +2404,9 @@ end subroutine overrides_create
     logical              :: do_z0_hwrf17   = .false.                  !< flag for using z0 scheme in 2017 HWRF
     logical              :: do_z0_hwrf17_hwonly = .false.             !< flag for using z0 scheme in 2017 HWRF only under high wind
     real(kind=kind_phys) :: wind_th_hwrf   = 33.                      !< wind speed threshold when z0 level off as in HWRF
+    real(kind=kind_phys) :: alpha_stable   = 5.                       !< tuning parameter for the dimensionless momentum and scalar gradient function in the surface layer
+    real(kind=kind_phys) :: alpha_unstable = 16.                      !< tuning parameter for the dimensionless momentum gradient function in the surface layer
+    logical              :: tune_ocean_surface_layer = .false.        !< if true, use alphas above to modify the surface layer dimensionless gradients over oceans
     logical              :: hybedmf        = .false.                  !< flag for hybrid edmf pbl scheme
     logical              :: myj_pbl        = .false.                  !< flag for NAM MYJ tke-based scheme
     logical              :: ysupbl         = .false.                  !< flag for hybrid edmf pbl scheme
@@ -2633,7 +2639,8 @@ end subroutine overrides_create
                                cscnv, cal_pre, do_aw, do_shoc, shocaftcnv, shoc_cld,        &
                                h2o_phys, pdfcld, shcnvcw, redrag, sfc_gfdl, z0s_max,        &
                                sfc_coupled, do_z0_moon, do_z0_hwrf15, do_z0_hwrf17,         &
-                               do_z0_hwrf17_hwonly, wind_th_hwrf,                           &
+                               do_z0_hwrf17_hwonly, wind_th_hwrf, alpha_stable,             &
+                               alpha_unstable, tune_ocean_surface_layer,                    &
                                hybedmf, dspheat, lheatstrg, hour_canopy, afac_canopy,       &
                                cnvcld, no_pbl, xkzm_lim, xkzm_fac, xkgdx,                   &
                                rlmn, rlmx, zolcru, cs0,                                     &
@@ -2878,6 +2885,9 @@ end subroutine overrides_create
     Model%do_z0_hwrf17     = do_z0_hwrf17
     Model%do_z0_hwrf17_hwonly = do_z0_hwrf17_hwonly
     Model%wind_th_hwrf     = wind_th_hwrf
+    Model%alpha_stable     = alpha_stable
+    Model%alpha_unstable   = alpha_unstable
+    Model%tune_ocean_surface_layer = tune_ocean_surface_layer
     Model%hybedmf          = hybedmf
     Model%myj_pbl          = myj_pbl
     Model%ysupbl           = ysupbl
@@ -3585,6 +3595,9 @@ end subroutine overrides_create
       print *, ' do_z0_hwrf17      : ', Model%do_z0_hwrf17
       print *, ' do_z0_hwrf17_hwonly : ', Model%do_z0_hwrf17_hwonly
       print *, ' wind_th_hwrf      : ', Model%wind_th_hwrf
+      print *, ' alpha_stable      : ', Model%alpha_stable
+      print *, ' alpha_unstable    : ', Model%alpha_unstable
+      print *, ' tune_ocean_surface_layer : ', Model%tune_ocean_surface_layer 
       print *, ' hybedmf           : ', Model%hybedmf
       print *, ' myj_pbl           : ', Model%myj_pbl
       print *, ' ysupbl            : ', Model%ysupbl

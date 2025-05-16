@@ -36,7 +36,8 @@
      &     dspheat,dusfc,dvsfc,dtsfc,dqsfc,hpbl,
      &     kinver,xkzm_mo,xkzm_ho,xkzm_ml,xkzm_hl,xkzm_mi,xkzm_hi,
      &     xkzm_s,xkzinv,do_dk_hb19,xkzm_lim,xkgdx,
-     &     rlmn, rlmx, cap_k0_land, dkt_out)
+     &     rlmn, rlmx, cap_k0_land, dkt_out, 
+     &     alpha_stable, alpha_unstable, tune_ocean_surface_layer)
 !
       use machine  , only : kind_phys
       use funcphys , only : fpvs
@@ -53,7 +54,8 @@
 !
       real(kind=kind_phys) delt, xkzm_s, xkzm_lim,
      &                     xkzm_mo, xkzm_ho, xkzm_ml, xkzm_hl, 
-     &                     xkzm_mi, xkzm_hi
+     &                     xkzm_mi, xkzm_hi,
+     &                     alpha_stable, alpha_unstable
       real(kind=kind_phys) dv(im,km),     du(im,km),
      &                     tdt(im,km),    rtg(im,km,ntrac),
      &                     u1(ix,km),     v1(ix,km),
@@ -77,7 +79,7 @@
 ! kgao note - q1 and rtg are local var now
 
 !
-      logical dspheat, cap_k0_land, do_dk_hb19
+      logical dspheat, cap_k0_land, do_dk_hb19, tune_ocean_surface_layer
 !          flag for tke dissipative heating
       real(kind=kind_phys),dimension(1:im,1:km),intent(OUT)::dkt_out
 
@@ -592,24 +594,10 @@
 !
 !     compute similarity parameters
 !
-      do i=1,im
-         zol(i) = max(rbsoil(i)*fm(i)*fm(i)/fh(i),rimin)
-         if(sfcflg(i)) then
-           zol(i) = min(zol(i),-zfmin)
-         else
-           zol(i) = max(zol(i),zfmin)
-         endif
-!
-         zol1 = zol(i)*sfcfrac*hpbl(i)/zl(i,1)
-         if(sfcflg(i)) then
-           tem     = 1.0 / (1. - aphi16*zol1)
-           phih(i) = sqrt(tem)
-           phim(i) = sqrt(phih(i))
-         else
-           phim(i) = 1. + aphi5*zol1
-           phih(i) = phim(i)
-         endif
-      enddo
+      call get_similarity_parameters(im, rbsoil, fm, fh, rimin,
+     &  sfcflg, zfmin, sfcfrac, hpbl, zl(1:im,1), 
+     &  aphi16, aphi5, alpha_unstable, alpha_stable, 
+     &  tune_ocean_surface_layer, phim, phih, zol)
 !
       do i=1,im
         if(pblflg(i)) then
@@ -1564,3 +1552,61 @@ c-----------------------------------------------------------------------
 c-----------------------------------------------------------------------
       return
       end
+
+      subroutine get_similarity_parameters(
+     &  im, rbsoil, fm, fh, rimin,
+     &  sfcflg, zfmin, sfcfrac, hpbl, zl, 
+     &  aphi16, aphi5, alpha_unstable, alpha_stable, 
+     &  tune_ocean_surface_layer, phim, phih, zol
+     &  )
+
+      use machine, only : kind_phys
+
+      implicit none
+      ! input
+      integer, intent(in) :: im
+      real(kind=kind_phys), dimension(1:im), intent(in) ::
+     &  rbsoil, fm, fh, hpbl, zl
+      real(kind=kind_phys), intent(in) :: rimin, zfmin, aphi16, aphi5,
+     &  alpha_unstable, alpha_stable, sfcfrac
+      logical, dimension(1:im), intent(in) :: sfcflg
+      logical, intent(in) :: tune_ocean_surface_layer
+
+      ! output
+      real(kind=kind_phys), dimension(1:im), intent(out) ::  phim, phih,
+     &   zol 
+
+      ! local 
+      integer i
+      real(kind=kind_phys) :: zol1, tem
+        
+        do i=1,im
+           zol(i) = max(rbsoil(i)*fm(i)*fm(i)/fh(i),rimin)
+           if(sfcflg(i)) then
+             zol(i) = min(zol(i),-zfmin)
+           else
+             zol(i) = max(zol(i),zfmin)
+           endif
+  !
+           zol1 = zol(i)*sfcfrac*hpbl(i)/zl(i)
+           if(sfcflg(i)) then
+             tem     = 1.0 / (1. - aphi16*zol1)
+             phih(i) = sqrt(tem)
+             if (tune_ocean_surface_layer) then
+              tem     = 1.0 / (1. - alpha_unstable*zol1)
+              phim(i) = sqrt(sqrt(tem))
+             else
+              phim(i) = sqrt(phih(i))
+             end if
+           else
+             if (tune_ocean_surface_layer) then 
+              phim(i) = 1. + alpha_stable*zol1
+             else
+              phim(i) = 1. + aphi5*zol1
+             end if
+             phih(i) = phim(i)
+           endif
+        enddo
+        return
+      end subroutine
+
