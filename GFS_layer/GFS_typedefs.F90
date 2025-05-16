@@ -2640,7 +2640,7 @@ end subroutine overrides_create
                                h2o_phys, pdfcld, shcnvcw, redrag, sfc_gfdl, z0s_max,        &
                                sfc_coupled, do_z0_moon, do_z0_hwrf15, do_z0_hwrf17,         &
                                do_z0_hwrf17_hwonly, wind_th_hwrf, alpha_stable,             &
-                               alpha_unstable, tune_ocean_surface_layer,                    &                                             &
+                               alpha_unstable, tune_ocean_surface_layer,                    &
                                hybedmf, dspheat, lheatstrg, hour_canopy, afac_canopy,       &
                                cnvcld, no_pbl, xkzm_lim, xkzm_fac, xkgdx,                   &
                                rlmn, rlmx, zolcru, cs0,                                     &
