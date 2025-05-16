@@ -566,7 +566,6 @@
 
       real(kind=kind_phys), parameter :: alpha=5., a0=-3.975
      &,             a1=12.32, alpha4_nonocean=4.0*alpha 
-     &,             alpha4_ocean = 4.*alpha_stable
      &,             b1=-7.755,  b2=6.041,  alpha2=alpha+alpha, beta=1.0
      &,             a0p=-7.941, a1p=24.75, b1p=-8.705, b2p=7.899
      &,             ztmin1=-999.0, ca=.4
@@ -581,7 +580,7 @@
           z1i = 1.0 / z1
 
           if (ilsimask == 0 .and. tune_ocean_surface_layer) then
-            alpha4 = alpha4_ocean
+            alpha4 = 4. * alpha_stable
           else
             alpha4 = alpha4_nonocean
           end if

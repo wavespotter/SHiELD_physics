@@ -1578,10 +1578,10 @@ c-----------------------------------------------------------------------
 
       ! local 
       integer i
-      real(kind=kind_phys) :: zol1
+      real(kind=kind_phys) :: zol1, tem
         
         do i=1,im
-           zol(i) = max(rbsoilv*fm(i)*fm(i)/fh(i),rimin)
+           zol(i) = max(rbsoil(i)*fm(i)*fm(i)/fh(i),rimin)
            if(sfcflg(i)) then
              zol(i) = min(zol(i),-zfmin)
            else
