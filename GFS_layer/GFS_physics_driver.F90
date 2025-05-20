@@ -1218,7 +1218,6 @@ module module_physics_driver
                  cdq, rb, Statein%prsl(1,1), work3, islmsk, stress, &
                  Sfcprop%ffmm,  Sfcprop%ffhh,                       &
                  Sfcprop%charnock,                                  &  ! Sofar added Spring 2023
-                 Sfcprop%rhoa,                                      &  ! Sofar added 9/22/23
                  Sfcprop%u10m, Sfcprop%v10m,                        &  ! Sofar added 11/17/23
                  Sfcprop%u10n, Sfcprop%v10n,                        &  ! Sofar added 9/22/23
                  fm10_neutral,                                      &  ! Sofar added 10/19/23
@@ -1526,7 +1525,7 @@ module module_physics_driver
               Sfcprop%f10m, Diag%u10m, Diag%v10m,        &
               Sfcprop%t2m, Sfcprop%q2m, work3, evap,           &
               Sfcprop%ffmm, Sfcprop%ffhh, fm10, fh2, &
-              fm10_neutral, Diag%u10n, Diag%v10n)  ! Added by Sofar: 10/19/23
+              fm10_neutral, Diag%u10n, Diag%v10n, Sfcprop%rhoa)  ! Added by Sofar: 10/19/23
       !endif
 
       Tbd%phy_f2d(:,Model%num_p2d) = 0.0
@@ -3885,7 +3884,7 @@ module module_physics_driver
                        Sfcprop%f10m, Diag%u10m, Diag%v10m, Sfcprop%t2m, &
                        Sfcprop%q2m, work3, evap, Sfcprop%ffmm,          &
                        Sfcprop%ffhh, fm10, fh2, &
-                       fm10_neutral, Diag%u10n, Diag%v10n)  ! Added by Sofar: 10/19/23
+                       fm10_neutral, Diag%u10n, Diag%v10n, Sfcprop%rhoa)  ! Added by Sofar: 10/19/23
 
         if (Model%lssav) then
           Diag%tmpmax (:) = max(Diag%tmpmax (:),Sfcprop%t2m(:))
