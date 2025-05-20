@@ -1333,6 +1333,8 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: evap   (:)    => null()   !< sfc moisture flux
     real (kind=kind_phys), pointer :: u10n   (:)    => null()   !< 10 meter u/v neutral wind speed !Sofar added 10/19/23
     real (kind=kind_phys), pointer :: v10n   (:)    => null()   !< 10 meter u/v neutral wind speed !Sofar added 10/19/23
+    real (kind=kind_phys), pointer :: zol    (:)    => null()   !< Dimensionless surface layer stability
+    real (kind=kind_phys), pointer :: rb     (:)    => null()   !< Surface layer bulk richardson number
     real (kind=kind_phys), pointer :: dpt2m  (:)    => null()   !< 2 meter dew point temperature
     real (kind=kind_phys), pointer :: zlvl   (:)    => null()   !< layer 1 height (m)
     real (kind=kind_phys), pointer :: psurf  (:)    => null()   !< surface pressure (Pa)
@@ -4091,6 +4093,8 @@ end subroutine overrides_create
     allocate (Diag%evap    (IM))
     allocate (Diag%u10n    (IM))  ! Sofar added: 10/19/13
     allocate (Diag%v10n    (IM))  ! Sofar added: 10/19/13
+    allocate (Diag%zol     (IM))
+    allocate (Diag%rb      (IM))
     allocate (Diag%dpt2m   (IM))
     allocate (Diag%zlvl    (IM))
     allocate (Diag%psurf   (IM))
@@ -4389,6 +4393,8 @@ end subroutine overrides_create
     Diag%evap    = zero
     Diag%u10n    = zero  ! Sofar added: 10/19/23
     Diag%v10n    = zero  ! Sofar added: 10/19/23
+    Diag%zol     = zero
+    Diag%rb      = zero
     Diag%dpt2m   = zero
     Diag%zlvl    = zero
     Diag%psurf   = zero

@@ -24,7 +24,7 @@
      &                    do_z0_moon, do_z0_hwrf15, do_z0_hwrf17,
      &                    do_z0_hwrf17_hwonly, wind_th_hwrf, 
      &                    alpha_stable, alpha_unstable,
-     &                    tune_ocean_surface_layer)
+     &                    tune_ocean_surface_layer, zol)
 
 ! oct 2019 - a clean and updated version by Kun Gao at GFDL (Kun.Gao@noaa.gov)
 
@@ -51,7 +51,7 @@
      &,                                    ddvel
      &,                                    fm10, fh2, sigmaf, shdmax
      &,                                    tsurf, snwdph
-     &,                                    fm_neutral, fm10_neutral     ! Sofar added Spring 2023
+     &,                                    fm_neutral, fm10_neutral, zol! Sofar added Spring 2023
       real(kind=kind_phys) :: ws1, ws10n, alpha_stable, alpha_unstable  ! Sofar added 10/19/23
       integer, dimension(im)             ::vegtype, islimsk
 
@@ -178,7 +178,7 @@
      &        alpha_stable, alpha_unstable, tune_ocean_surface_layer,
      &        rb(i), fm(i), fh(i), fm10(i), fh2(i),
      &        fm_neutral(i), fm10_neutral(i),                          !(ADDED by Sofar)
-     &        cm(i), ch(i), stress(i), ustar(i))
+     &        cm(i), ch(i), stress(i), ustar(i), zol(i))
 
           elseif (islimsk(i) == 0) then ! over water
 
@@ -211,7 +211,7 @@
      &        alpha_stable, alpha_unstable, tune_ocean_surface_layer,
      &        rb(i), fm(i), fh(i), fm10(i), fh2(i),
      &        fm_neutral(i), fm10_neutral(i),                          !(ADDED by Sofar)
-     &        cm(i), ch(i), stress(i), ustar(i))
+     &        cm(i), ch(i), stress(i), ustar(i), zol(i))
 
 ! === iteration 2
 
@@ -313,7 +313,7 @@
      &        alpha_stable, alpha_unstable, tune_ocean_surface_layer,
      &        rb(i), fm(i), fh(i), fm10(i), fh2(i),
      &        fm_neutral(i), fm10_neutral(i),                          !(ADDED by Sofar)
-     &        cm(i), ch(i), stress(i), ustar(i))
+     &        cm(i), ch(i), stress(i), ustar(i), zol(i))
 
             z0rl(i) = 100.0 * z0max
             ztrl(i) = 100.0 * ztmax
@@ -520,7 +520,7 @@
      &       alpha_stable, alpha_unstable, tune_ocean_surface_layer,
      &       rb, fm, fh, fm10, fh2,
      &       fm_neutral, fm10_neutral,                                 !(ADDED by Sofar)
-     &       cm, ch, stress, ustar)
+     &       cm, ch, stress, ustar, zol)
 
 ! --- input 
 ! ilsimask - land/sea/ice mask
@@ -544,6 +544,7 @@
 ! cm, ch    - surface exchange coefficients for momentum and heat
 ! stress    - surface wind stress
 ! ustar     - surface frictional velocity 
+! zol       - dimensionless stability
 
       use machine , only : kind_phys
       use physcons, grav => con_g
@@ -609,6 +610,7 @@
           fh2     = log((ztmax+2.)  * tem2)
           hlinf   = rb * fm * fm / fh
           hlinf   = min(max(hlinf,ztmin1),ztmax1)
+          zol     = hlinf
 
           fm_neutral = fm                                              !(ADDED by Sofar)
           fm10_neutral = fm10                                          !(ADDED by Sofar)
