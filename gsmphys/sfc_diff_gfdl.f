@@ -12,10 +12,8 @@
      &                    snwdph,tskin,z0rl,ztrl,cm,ch,rb,
      &                    prsl1,prslki,islimsk,
      &                    stress,fm,fh,
-     &                    charnock,                             ! Sofar added Spring 2023
-     &                    u10m_array,v10m_array,                ! Sofar added 11/17/23
-     &                    u10n,v10n,                            ! Sofar added 9/22/23
-     &                    fm10_neutral,                         ! Sofar added 10/19/23
+     &                    charnock,                                                          
+     &                    fm10_neutral,               
      &                    ustar,wind,ddvel,fm10,fh2,
      &                    sigmaf,vegtype,shdmax,ivegsrc,
      &                    tsurf,flag_iter,redrag,
@@ -44,8 +42,6 @@
      &,                                    prsl1, prslki, stress
      &,                                    fm, fh
      &,                                    charnock                     ! Sofar added Spring 2023
-     &,                                    u10n, v10n                   ! Sofar added 9/22/23
-     &,                                    u10m_array, v10m_array       ! Sofar added 11/17/23
      &,                                    ustar, wind 
      &,                                    ddvel
      &,                                    fm10, fh2, sigmaf, shdmax
@@ -258,14 +254,6 @@
 !           ! Convert to components  by making use of the wind direction from the lowest model level
 !           u10n = (u1(i) / ws1) * ws10n
 !           v10n = (v1(i) / ws1) * ws10n
-
-            ! Compute neutral winds for output to Sfcprop
-            u10n(i) = u1(i) * fm10_neutral(i) / fm(i) 
-            v10n(i) = v1(i) * fm10_neutral(i) / fm(i)
-
-            ! Compute standard 10m winds for output to Sfcprop
-            u10m_array(i) = u1(i) * fm10(i) / fm(i)
-            v10m_array(i) = v1(i) * fm10(i) / fm(i)
 
             ! ---------------------------------------------- - Sofar (end)
               
