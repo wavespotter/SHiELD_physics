@@ -483,7 +483,7 @@
 
       real(kind=kind_phys), parameter ::
      &          charnock=.014
-     &          wind_th_moon = 20. 
+     &,         wind_th_moon = 20. 
      &,         a = 0.56
      &,         b = -20.255
      &,         c = wind_th_moon - 2.458
