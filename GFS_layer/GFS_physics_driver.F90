@@ -15,7 +15,6 @@ module module_physics_driver
                                    con_rv, con_hvap, con_hfus,       &
                                    con_rerth, con_pi, rhc_max, dxmin,&
                                    dxinv, pa2mb, rlapse, con_eps, con_epsm1, con_cvap
-  use cs_conv,               only: cs_convr
   use ozne_def,              only: levozp,  oz_coeff, oz_pres
   use h2o_def,               only: levh2o, h2o_coeff, h2o_pres
   use gfs_fv3_needs,         only: get_prs_fv3, get_phi_fv3
@@ -1217,7 +1216,7 @@ module module_physics_driver
                  Sfcprop%tsfc, Sfcprop%zorl, Sfcprop%ztrl, cd,      &
                  cdq, rb, Statein%prsl(1,1), work3, islmsk, stress, &
                  Sfcprop%ffmm,  Sfcprop%ffhh,                       &
-                 Sfcprop%charnock,                                  &                          &                
+                 Sfcprop%charnock,                                  &              
                  fm10_neutral,                                      &  
                  Sfcprop%uustar,                                    &
                  wind,  Tbd%phy_f2d(1,Model%num_p2d), fm10, fh2,    &
@@ -1226,7 +1225,7 @@ module module_physics_driver
                  Model%do_z0_moon, Model%do_z0_hwrf15,              &
                  Model%do_z0_hwrf17, Model%do_z0_hwrf17_hwonly,     &
                  Model%wind_th_hwrf,                                &
-                 Model%alpha_stable, Model%alpha_unstable,
+                 Model%alpha_stable, Model%alpha_unstable,          &
                  Model%tune_ocean_surface_layer,                    &
                  Diag%zol)
             else
@@ -1317,13 +1316,29 @@ module module_physics_driver
 
 !  --- ...  surface energy balance over ocean
 
-          call sfc_ocean                                                &
+          if (Model%sfc_coupled) then
+            ! kgao: this version is for coupling with MOM6, which
+            !       gets hflx and evap over ocean points
+            !       based on shflx and lhflx from coupler
+            call sfc_ocean_coupled                                        &
+  !  ---  inputs:
+             (im, Statein%pgr, Statein%ugrs, Statein%vgrs, Statein%tgrs,  &
+              Statein%qgrs, Sfcprop%tsfc, cd, cdq, Statein%prsl(1,1),     &
+              work3, islmsk, Tbd%phy_f2d(1,Model%num_p2d), flag_iter,     &
+              ! kgao: shflx and lhflx from coupler 
+              Sfcprop%shflx, Sfcprop%lhflx,                               &
+  !  ---  outputs:
+               qss, Diag%cmm, Diag%chh, gflx, evap, hflx, ep1d)
+  
+            else
+            call sfc_ocean                                                &
 !  ---  inputs:
            (im, Statein%pgr, Statein%ugrs, Statein%vgrs, Statein%tgrs,  &
             Statein%qgrs, Sfcprop%tsfc, cd, cdq, Statein%prsl(1,1),     &
             work3, islmsk, Tbd%phy_f2d(1,Model%num_p2d), flag_iter,     &
 !  ---  outputs:
              qss, Diag%cmm, Diag%chh, gflx, evap, hflx, ep1d)
+            endif
 
         endif       ! if ( nstf_name(1) > 0 ) then
 

@@ -671,6 +671,7 @@ module GFS_typedefs
     logical              :: shcnvcw         !< flag for shallow convective cloud
     logical              :: redrag          !< flag for reduced drag coeff. over sea
     logical              :: sfc_gfdl        !< flag for using updated sfc layer scheme
+    logical              :: sfc_coupled     !< flag for using sfc layer scheme designed for coupling
     real(kind=kind_phys) :: z0s_max         !< a limiting value for z0 under high winds
     logical              :: do_z0_moon      !< flag for using z0 scheme in Moon et al. 2007 (kgao)
     logical              :: do_z0_hwrf15    !< flag for using z0 scheme in 2015 HWRF (kgao)
@@ -3579,6 +3580,7 @@ end subroutine overrides_create
       print *, ' shcnvcw           : ', Model%shcnvcw
       print *, ' redrag            : ', Model%redrag
       print *, ' sfc_gfdl          : ', Model%sfc_gfdl
+      print *, ' sfc_coupled       : ', Model%sfc_coupled
       print *, ' z0s_max           : ', Model%z0s_max
       print *, ' do_z0_moon        : ', Model%do_z0_moon
       print *, ' do_z0_hwrf15      : ', Model%do_z0_hwrf15
