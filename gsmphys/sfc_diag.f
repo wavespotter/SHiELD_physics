@@ -1,8 +1,8 @@
       subroutine sfc_diag(im,ps,u1,v1,t1,q1,
      &                    tskin,qsurf,f10m,u10m,v10m,t2m,q2m,
      &                    prslki,evap,fm,fh,fm10,fh2,
-     &                    sfc_u10m,sfc_v10m,
-     &                    fm10_neutral u10n,v10n,
+     &                    sfc_u10m, sfc_v10m,
+     &                    fm10_neutral, u10n, v10n,
      &                    sfc_u10n, sfc_v10n, rhoa)
 !
       use machine , only : kind_phys
@@ -18,7 +18,8 @@
      &                       f10m, u10m, v10m, t2m, q2m, prslki, evap,
      &                       fm,   fh,   fm10, fh2, 
      &                       fm10_neutral, u10n, v10n,
-     &                       sfc_u10n, sfc_v10n, sfc_u10m, sfc_v10m, rhoa 
+     &                       sfc_u10n, sfc_v10n, sfc_u10m, sfc_v10m
+     &                       rhoa 
 !
 !     locals
 !
