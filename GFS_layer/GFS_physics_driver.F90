@@ -15,6 +15,7 @@ module module_physics_driver
                                    con_rv, con_hvap, con_hfus,       &
                                    con_rerth, con_pi, rhc_max, dxmin,&
                                    dxinv, pa2mb, rlapse, con_eps, con_epsm1, con_cvap
+  use cs_conv,               only: cs_convr
   use ozne_def,              only: levozp,  oz_coeff, oz_pres
   use h2o_def,               only: levh2o, h2o_coeff, h2o_pres
   use gfs_fv3_needs,         only: get_prs_fv3, get_phi_fv3
@@ -1226,8 +1227,7 @@ module module_physics_driver
                  Model%do_z0_hwrf17, Model%do_z0_hwrf17_hwonly,     &
                  Model%wind_th_hwrf,                                &
                  Model%alpha_stable, Model%alpha_unstable,          &
-                 Model%tune_ocean_surface_layer,                    &
-                 Diag%zol)
+                 Model%tune_ocean_surface_layer, Diag%zol)
             else
 ! GFS original sfc_diff modified by kgao 
             call sfc_diff (im,Statein%pgr, Statein%ugrs, Statein%vgrs,&
