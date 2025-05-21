@@ -1191,26 +1191,7 @@ module module_physics_driver
          !else
 !!$         endif
 
-            ! kgao - need a logic to ensure sfc_coupled is true when coupled with MOM6
-            if (Model%sfc_coupled) then
-! a version of sfc_diff from coupling with MOM6 by kgao  
-! Sfcprop%uustar,Sfcprop%zorl,Sfcprop%ztrl are not updated over ocean points
-            call sfc_diff_coupled(im,Statein%pgr, Statein%ugrs, Statein%vgrs,&
-                 Statein%tgrs, Statein%qgrs, Diag%zlvl, Sfcprop%snowd, &
-                 Sfcprop%tsfc, Sfcprop%zorl, Sfcprop%ztrl, cd,      &
-                 cdq, rb, Statein%prsl(1,1), work3, islmsk, stress, &
-                 Sfcprop%ffmm,  Sfcprop%ffhh, Sfcprop%uustar,       &
-                 wind,  Tbd%phy_f2d(1,Model%num_p2d), fm10, fh2,    &
-                 sigmaf, vegtype, Sfcprop%shdmax, Model%ivegsrc,    &
-                 tsurf, flag_iter,                                  &
-                 Model%alpha_stable, Model%alpha_unstable,          &
-                 Model%tune_ocean_surface_layer, Diag%zol)
-!                , Model%redrag, Model%z0s_max,     &
-                 !Model%do_z0_moon, Model%do_z0_hwrf15,              &
-                 !Model%do_z0_hwrf17, Model%do_z0_hwrf17_hwonly,     &
-                 !Model%wind_th_hwrf)
-
-            else if (Model%sfc_gfdl) then
+            if (Model%sfc_gfdl) then
 ! a new and more flexible version of sfc_diff by kgao
             call sfc_diff_gfdl(im,Statein%pgr, Statein%ugrs, Statein%vgrs,&
                  Statein%tgrs, Statein%qgrs, Diag%zlvl, Sfcprop%snowd, &
@@ -1315,22 +1296,7 @@ module module_physics_driver
         else
 
 !  --- ...  surface energy balance over ocean
-
-          if (Model%sfc_coupled) then
-            ! kgao: this version is for coupling with MOM6, which
-            !       gets hflx and evap over ocean points
-            !       based on shflx and lhflx from coupler
-            call sfc_ocean_coupled                                        &
-  !  ---  inputs:
-             (im, Statein%pgr, Statein%ugrs, Statein%vgrs, Statein%tgrs,  &
-              Statein%qgrs, Sfcprop%tsfc, cd, cdq, Statein%prsl(1,1),     &
-              work3, islmsk, Tbd%phy_f2d(1,Model%num_p2d), flag_iter,     &
-              ! kgao: shflx and lhflx from coupler 
-              Sfcprop%shflx, Sfcprop%lhflx,                               &
-  !  ---  outputs:
-               qss, Diag%cmm, Diag%chh, gflx, evap, hflx, ep1d)
-  
-            else
+       
             call sfc_ocean                                                &
 !  ---  inputs:
            (im, Statein%pgr, Statein%ugrs, Statein%vgrs, Statein%tgrs,  &
@@ -1338,7 +1304,6 @@ module module_physics_driver
             work3, islmsk, Tbd%phy_f2d(1,Model%num_p2d), flag_iter,     &
 !  ---  outputs:
              qss, Diag%cmm, Diag%chh, gflx, evap, hflx, ep1d)
-            endif
 
         endif       ! if ( nstf_name(1) > 0 ) then
 
