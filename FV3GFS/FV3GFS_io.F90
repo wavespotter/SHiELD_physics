@@ -7265,6 +7265,17 @@ module FV3GFS_io_mod
 
     idx = idx + 1
     Diag(idx)%axes = 2
+    Diag(idx)%name = 'CHAR'
+    Diag(idx)%desc = 'charnock parameter'
+    Diag(idx)%unit = 'm'
+    Diag(idx)%mod_name = 'gfs_sfc'
+    allocate (Diag(idx)%data(nblks))
+    do nb = 1,nblks
+      Diag(idx)%data(nb)%var2 => Sfcprop(nb)%charnock(:)
+    enddo
+
+    idx = idx + 1
+    Diag(idx)%axes = 2
     Diag(idx)%name = 'VFRACsfc'
     Diag(idx)%desc = 'vegetation fraction'
     Diag(idx)%unit = 'N/A'

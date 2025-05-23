@@ -696,6 +696,7 @@ module GFS_typedefs
     real(kind=kind_phys) :: xkzm_mi         !< [in] bkgd_vdif_m  background vertical diffusion for momentum for ice points
     real(kind=kind_phys) :: xkzm_hi         !< [in] bkgd_vdif_h  background vertical diffusion for heat q for ice points
     real(kind=kind_phys) :: xkzm_s          !< [in] bkgd_vdif_s  sigma threshold for background mom. diffusion
+    real(kind=kind_phys) :: ck0_o           !< EDMF TKE scheme empirical constant in Kolmogorov-Prandtl equation
     real(kind=kind_phys) :: xkzm_lim        !< [in] background vertical diffusion limit
     real(kind=kind_phys) :: xkzm_fac        !< [in] background vertical diffusion factor
     real(kind=kind_phys) :: xkzminv         !< diffusivity in inversion layers
@@ -2410,6 +2411,7 @@ end subroutine overrides_create
     real(kind=kind_phys) :: xkzm_mi        = 1.0d0                    !< [in] bkgd_vdif_m  background vertical diffusion for momentum over ice
     real(kind=kind_phys) :: xkzm_hi        = 1.0d0                    !< [in] bkgd_vdif_h  background vertical diffusion for heat q over ice
     real(kind=kind_phys) :: xkzm_s         = 1.0d0                    !< [in] bkgd_vdif_s  sigma threshold for background mom. diffusion
+    real(kind=kind_phys) :: ck0_o          = 0.4d0                    !< EDMF TKE scheme empirical constant in Kolmogorov-Prandtl equation
     real(kind=kind_phys) :: xkzm_lim       = 0.01                     !< [in] background vertical diffusion limit
     real(kind=kind_phys) :: xkzm_fac       = 1.0                      !< [in] background vertical diffusion factor
     real(kind=kind_phys) :: xkzminv        = 0.15                     !< diffusivity in inversion layers
@@ -2627,7 +2629,7 @@ end subroutine overrides_create
                                cnvcld, no_pbl, xkzm_lim, xkzm_fac, xkgdx,                   &
                                rlmn, rlmx, zolcru, cs0,                                     &
                                xkzm_m, xkzm_h, xkzm_ml, xkzm_hl, xkzm_mi, xkzm_hi,          &
-                               xkzm_s, xkzminv, moninq_fac, dspfac,                         &
+                               xkzm_s, ck0_o, xkzminv, moninq_fac, dspfac,                  &
                                bl_upfr, bl_dnfr, ysu_ent_fac, ysu_pfac_q,                   &
                                ysu_brcr_ub, ysu_rlam, ysu_afac, ysu_bfac, ysu_hpbl_cr,      &
                                tnl_fac, qnl_fac, unl_fac,                                   &
@@ -2880,6 +2882,7 @@ end subroutine overrides_create
     Model%xkzm_mi          = xkzm_mi
     Model%xkzm_hi          = xkzm_hi
     Model%xkzm_s           = xkzm_s
+    Model%ck0_o            = ck0_o
     Model%xkzm_lim         = xkzm_lim
     Model%xkzm_fac         = xkzm_fac
     Model%xkzminv          = xkzminv
@@ -3585,6 +3588,7 @@ end subroutine overrides_create
       print *, ' xkzm_mi           : ', Model%xkzm_mi
       print *, ' xkzm_hi           : ', Model%xkzm_hi
       print *, ' xkzm_s            : ', Model%xkzm_s
+      print *, ' ck0_o             : ', Model%ck0_o
       print *, ' xkzm_lim          : ', Model%xkzm_lim
       print *, ' xkzm_fac          : ', Model%xkzm_fac
       print *, ' xkzminv           : ', Model%xkzminv
