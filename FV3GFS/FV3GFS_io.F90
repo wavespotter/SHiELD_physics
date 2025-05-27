@@ -7291,7 +7291,7 @@ module FV3GFS_io_mod
     Diag(idx)%axes = 2
     Diag(idx)%name = 'CHAR'
     Diag(idx)%desc = 'charnock parameter'
-    Diag(idx)%unit = 'm'
+    Diag(idx)%unit = '1'
     Diag(idx)%mod_name = 'gfs_sfc'
     allocate (Diag(idx)%data(nblks))
     do nb = 1,nblks
@@ -8465,6 +8465,3 @@ function starts_with(string, prefix)
 end function starts_with
 
 end module FV3GFS_io_mod
-
-
-
