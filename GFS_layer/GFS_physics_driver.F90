@@ -514,6 +514,7 @@ module module_physics_driver
       real(kind=kind_phys), dimension(size(Grid%xlon,1),Model%levs) ::  &
           del, rhc, dtdt, dudt, dvdt, gwdcu, gwdcv, dtdtc, rainp,       &
           ud_mf, dd_mf, dt_mf, prnum, dkt, flux_cg, flux_en,            &
+          flux_uup, flux_vup,                                           &
           prefluxw, prefluxr, prefluxi, prefluxs, prefluxg,             &
           sigmatot, sigmafrac, specific_heat, final_dynamics_delp, dtdt_gwdps, &
           wu2_shal,  eta_shal 
@@ -1699,7 +1700,8 @@ module module_physics_driver
                    Model%xkzm_s,  Model%xkzminv, Model%ck0_o, Model%ce0_o,      &
                    Model%afrac_o, Model%do_dk_hb19,                             &
                    Model%xkzm_lim, Model%xkgdx,                                 &
-                   Model%rlmn, Model%rlmx, Model%cap_k0_land, dkt,              &
+                   Model%rlmn, Model%rlmx, Model%cap_k0_land, dkt,  dku,        &
+                   flux_uup, flux_vup,                                          &
                    Model%alpha_stable, Model%alpha_unstable,                    &
                    Model%tune_ocean_surface_layer)
 
@@ -1917,6 +1919,7 @@ module module_physics_driver
          do k=1,levs
          do i=1,im
             Diag%dkt(i,k) = dkt(i,k)
+            Diag%dku(i,k) = dku(i,k)
          enddo
          enddo
 
@@ -1929,6 +1932,8 @@ module module_physics_driver
          do i=1,im
             Diag%flux_cg(i,k) = flux_cg(i,k)
             Diag%flux_en(i,k) = flux_en(i,k)
+            Diag%flux_uup(i,k) = flux_uup(i,k)
+            Diag%flux_vup(i,k) = flux_vup(i,k)
          enddo
          enddo
 

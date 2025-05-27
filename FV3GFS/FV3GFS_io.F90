@@ -6696,8 +6696,19 @@ module FV3GFS_io_mod
 
     idx = idx + 1
     Diag(idx)%axes = 3
+    Diag(idx)%name = 'dku_pbl'
+    Diag(idx)%desc = 'instantaneous momentum diffusion coefficient'
+    Diag(idx)%unit = 'm**2/s'
+    Diag(idx)%mod_name = 'gfs_phys'
+    allocate (Diag(idx)%data(nblks))
+    do nb = 1,nblks
+       Diag(idx)%data(nb)%var3 => Gfs_diag(nb)%dku(:,:)
+    enddo
+
+    idx = idx + 1
+    Diag(idx)%axes = 3
     Diag(idx)%name = 'flux_cg'
-    Diag(idx)%desc = 'instantaneous counter-gradient heat flux in ysu'
+    Diag(idx)%desc = 'instantaneous counter-gradient heat flux'
     Diag(idx)%unit = 'K*m/s'
     Diag(idx)%mod_name = 'gfs_phys'
     allocate (Diag(idx)%data(nblks))
@@ -6708,12 +6719,34 @@ module FV3GFS_io_mod
     idx = idx + 1
     Diag(idx)%axes = 3
     Diag(idx)%name = 'flux_en'
-    Diag(idx)%desc = 'instantaneous entrainment heat flux in ysu'
+    Diag(idx)%desc = 'instantaneous entrainment heat flux'
     Diag(idx)%unit = 'K*m/s'
     Diag(idx)%mod_name = 'gfs_phys'
     allocate (Diag(idx)%data(nblks))
     do nb = 1,nblks
        Diag(idx)%data(nb)%var3 => Gfs_diag(nb)%flux_en(:,:)
+    enddo
+
+    idx = idx + 1
+    Diag(idx)%axes = 3
+    Diag(idx)%name = 'flux_uup'
+    Diag(idx)%desc = 'instantaneous upward flux of u momentum'
+    Diag(idx)%unit = 'm/s*m/s'
+    Diag(idx)%mod_name = 'gfs_phys'
+    allocate (Diag(idx)%data(nblks))
+    do nb = 1,nblks
+       Diag(idx)%data(nb)%var3 => Gfs_diag(nb)%flux_uup(:,:)
+    enddo
+
+    idx = idx + 1
+    Diag(idx)%axes = 3
+    Diag(idx)%name = 'flux_vup'
+    Diag(idx)%desc = 'instantaneous upward flux of v momentum'
+    Diag(idx)%unit = 'm/s*m/s'
+    Diag(idx)%mod_name = 'gfs_phys'
+    allocate (Diag(idx)%data(nblks))
+    do nb = 1,nblks
+       Diag(idx)%data(nb)%var3 => Gfs_diag(nb)%flux_vup(:,:)
     enddo
 
     idx = idx + 1

@@ -4142,8 +4142,11 @@ end subroutine overrides_create
       allocate (Diag%q_dt   (IM,Model%levs,oz_coeff+5))
       allocate (Diag%q_dt_int   (IM,oz_coeff+5))
       allocate (Diag%dkt    (IM,Model%levs))
+      allocate (Diag%dku    (IM,Model%levs))
       allocate (Diag%flux_cg(IM,Model%levs))
       allocate (Diag%flux_en(IM,Model%levs))
+      allocate (Diag%flux_uup(IM,Model%levs))
+      allocate (Diag%flux_vup(IM,Model%levs))
       allocate (Diag%wu2_shal(IM,Model%levs))
       allocate (Diag%eta_shal(IM,Model%levs))
       allocate (Diag%co2(IM,Model%levs))
@@ -4455,7 +4458,10 @@ end subroutine overrides_create
       Diag%dt3dt   = zero
       Diag%dq3dt   = zero
       Diag%dkt     = zero
+      Diag%dku     = zero
       Diag%flux_cg = zero
+      Diag%flux_uup = zero
+      Diag%flux_vup = zero
       Diag%flux_en = zero
       Diag%wu2_shal= zero
       Diag%eta_shal= zero

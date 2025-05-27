@@ -36,7 +36,7 @@
      &     dspheat,dusfc,dvsfc,dtsfc,dqsfc,hpbl,
      &     kinver,xkzm_mo,xkzm_ho,xkzm_ml,xkzm_hl,xkzm_mi,xkzm_hi,
      &     xkzm_s,xkzinv,ck0_o,ce0_o, afrac_o,do_dk_hb19,xkzm_lim,xkgdx,
-     &     rlmn, rlmx, cap_k0_land, dkt_out, 
+     &     rlmn, rlmx, cap_k0_land, dkt_out,flux_uup,flux_vup,dku_out,
      &     alpha_stable, alpha_unstable, tune_ocean_surface_layer)
 !
       use machine  , only : kind_phys
@@ -82,7 +82,8 @@
 !
       logical dspheat, cap_k0_land, do_dk_hb19, tune_ocean_surface_layer
 !          flag for tke dissipative heating
-      real(kind=kind_phys),dimension(1:im,1:km),intent(OUT)::dkt_out
+      real(kind=kind_phys),dimension(1:im,1:km),intent(OUT)::dkt_out, 
+     &                     dku_out, flux_uup, flux_vup
 
 !
 !----------------------------------------------------------------------
@@ -209,6 +210,10 @@
 
       elmx = rlmx
       ch0_o = ck0_o
+      dkt_out = 0.
+      dku_out = 0.
+      flux_uup = 0.
+      flux_vup = 0.
 !
 !************************************************************************
 !
@@ -977,6 +982,7 @@
       do k=1,km1
         do i=1,im
            dkt_out(i,k) = dkt(i,k)
+           dku_out(i,k) = dku(i,k)
        enddo
       enddo
 
@@ -1446,10 +1452,12 @@ c
              ptem      = ucko(i,k) + ucko(i,k+1)
              f1(i,k)   = f1(i,k) - (ptem - tem) * ptem1
              f1(i,k+1) = u1(i,k+1) + (ptem - tem) * ptem2
+             flux_uup(i,k) = 0.5*(ptem-tem)*xmf(i,k)
              tem       = v1(i,k) + v1(i,k+1)
              ptem      = vcko(i,k) + vcko(i,k+1)
              f2(i,k)   = f2(i,k) - (ptem - tem) * ptem1
              f2(i,k+1) = v1(i,k+1) + (ptem - tem) * ptem2
+             flux_vup(i,k) = 0.5*(ptem-tem)*xmf(i,k)
           else
              f1(i,k+1) = u1(i,k+1)
              f2(i,k+1) = v1(i,k+1)
