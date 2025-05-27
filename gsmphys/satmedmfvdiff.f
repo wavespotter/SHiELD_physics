@@ -35,7 +35,7 @@
      &     prsi,del,prsl,prslk,phii,phil,delt,
      &     dspheat,dusfc,dvsfc,dtsfc,dqsfc,hpbl,
      &     kinver,xkzm_mo,xkzm_ho,xkzm_ml,xkzm_hl,xkzm_mi,xkzm_hi,
-     &     xkzm_s,xkzinv,do_dk_hb19,xkzm_lim,xkgdx,
+     &     xkzm_s,xkzinv,ck0_o,ce0_o, afrac_o,do_dk_hb19,xkzm_lim,xkgdx,
      &     rlmn, rlmx, cap_k0_land, dkt_out, 
      &     alpha_stable, alpha_unstable, tune_ocean_surface_layer)
 !
@@ -55,7 +55,8 @@
       real(kind=kind_phys) delt, xkzm_s, xkzm_lim,
      &                     xkzm_mo, xkzm_ho, xkzm_ml, xkzm_hl, 
      &                     xkzm_mi, xkzm_hi,
-     &                     alpha_stable, alpha_unstable
+     &                     alpha_stable, alpha_unstable,ce0_o, afrac_o,
+     &                     ch0_o
       real(kind=kind_phys) dv(im,km),     du(im,km),
      &                     tdt(im,km),    rtg(im,km,ntrac),
      &                     u1(ix,km),     v1(ix,km),
@@ -207,6 +208,7 @@
       parameter(rchck=1.5,cdtn=25.)
 
       elmx = rlmx
+      ch0_o = ck0_o
 !
 !************************************************************************
 !
@@ -760,10 +762,10 @@
          ntcw_new = ntcw-1
       endif
 ! EDMF parameterization Siebesma et al.(2007) 
-      call mfpblt(im,ix,km,kmpbl,ntcw_new,ntrac1,dt2,
+      call mfpblt(im,ix,islimsk,km,kmpbl,ntcw_new,ntrac1,dt2,
      &    pcnvflg,zl,zm,q1,t1,u1,v1,plyr,pix,thlx,thvx,
      &    gdx,hpbl,kpbl,vpert,buou,xmf,
-     &    tcko,qcko,ucko,vcko,xlamue)
+     &    tcko,qcko,ucko,vcko,xlamue,ce0_o, afrac_o)
 ! mass-flux parameterization for stratocumulus-top-induced turbulence mixing
       call mfscu(im,ix,km,kmscu,ntcw_new,ntrac1,dt2,
      &    scuflg,zl,zm,q1,t1,u1,v1,plyr,pix,
@@ -788,10 +790,18 @@
             prn(i,k) = min(prn(i,k),prmax)
             prn(i,k) = max(prn(i,k),prmin)
 !
-            ckz(i,k) = ck1 + (ck0-ck1)*exp(ptem)
+            if (islimsk(i) == 0) then
+              ckz(i,k) = ck1 + (ck0_o-ck1)*exp(ptem)
+            else
+              ckz(i,k) = ck1 + (ck0_o-ck1)*exp(ptem)
+            end if
             ckz(i,k) = min(ckz(i,k),ck0)
             ckz(i,k) = max(ckz(i,k),ck1)
-            chz(i,k) = ch1 + (ch0-ch1)*exp(ptem)
+            if (islimsk(i) == 0) then
+              chz(i,k) = ch1 + (ch0_o-ch1)*exp(ptem)
+            else
+              chz(i,k) = ch1 + (ch0-ch1)*exp(ptem)
+            end if
             chz(i,k) = min(chz(i,k),ch0)
             chz(i,k) = max(chz(i,k),ch1)
           endif
