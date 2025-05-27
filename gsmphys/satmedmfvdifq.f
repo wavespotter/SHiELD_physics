@@ -54,7 +54,7 @@
      &     prsi,del,prsl,prslk,phii,phil,delt,
      &     dspheat,dusfc,dvsfc,dtsfc,dqsfc,hpbl,
      &     kinver,xkzm_mo,xkzm_ho,xkzm_ml,xkzm_hl,xkzm_mi,xkzm_hi,
-     &     xkzm_s,xkzinv,ck0_o,rlmx,zolcru,cs0,
+     &     xkzm_s,xkzinv,rlmx,zolcru,cs0,
      &     do_dk_hb19,xkgdx,dspfac,bl_upfr,bl_dnfr,dkt_out,
      &     flux_up, flux_dn)
 !
@@ -191,12 +191,12 @@
      &                     rlmx,    elmx,
      &                     ttend,   utend,  vtend,  qtend,
      &                     zfac,    zfmin,  vk,     spdk2,
-     &                     tkmin,   tkminx, xkgdx,  xkzinv, ck0_o,
+     &                     tkmin,   tkminx, xkgdx,  xkzinv,
      &                     zlup,    zldn,   bsum,   cs0,
      &                     tem,     tem1,   tem2,   tem3,
      &                     ptem,    ptem0,  ptem1,  ptem2
 !
-      real(kind=kind_phys) ck0, ck1, ch0, ch1, ce0, rchck, ch0_o
+      real(kind=kind_phys) ck0, ck1, ch0, ch1, ce0, rchck
 !
       real(kind=kind_phys) qlcr, zstblmax, hcrinv
 !
@@ -237,7 +237,6 @@
       dkt_out = 0.
       flux_up = 0.
       flux_dn = 0. 
-      ch0_o = ck0_o
 !
 ! kgao note (jul 2019) 
 ! the code was originally written assuming ntke=ntrac
@@ -830,17 +829,9 @@
             prn(i,k) = min(prn(i,k),prmax)
             prn(i,k) = max(prn(i,k),prmin)
 !
-            if (islimsk(i) == 0) then
-              ckz(i,k) = ck0_o + (ck1 - ck0_o) * tem2
-            else
-              ckz(i,k) = ck0 + (ck1 - ck0) * tem2
-            end if
+            ckz(i,k) = ck0 + (ck1 - ck0) * tem2
             ckz(i,k) = max(min(ckz(i,k), ck0), ck1)
-            if (islimsk(i) == 0) then
-              chz(i,k) = ch0_o + (ch1 - ch0_o) * tem2
-            else
-              chz(i,k) = ch0 + (ch1 - ch0) * tem2
-            end if
+            chz(i,k) = ch0 + (ch1 - ch0) * tem2
             chz(i,k) = max(min(chz(i,k), ch0), ch1)
 !
           endif

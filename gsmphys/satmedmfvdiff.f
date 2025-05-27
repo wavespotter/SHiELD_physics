@@ -35,7 +35,8 @@
      &     prsi,del,prsl,prslk,phii,phil,delt,
      &     dspheat,dusfc,dvsfc,dtsfc,dqsfc,hpbl,
      &     kinver,xkzm_mo,xkzm_ho,xkzm_ml,xkzm_hl,xkzm_mi,xkzm_hi,
-     &     xkzm_s,xkzinv,ck0_o, do_dk_hb19,xkzm_lim,xkgdx,
+     &     xkzm_s,xkzinv,ck0_o, ce0_o, afrac_o, do_dk_hb19,
+     &     xkzm_lim,xkgdx,
      &     rlmn, rlmx, cap_k0_land, dkt_out)
 !
       use machine  , only : kind_phys
@@ -52,8 +53,8 @@
       integer kpbl(im), kinver(im), islimsk(im)
 !
       real(kind=kind_phys) delt, xkzm_s, xkzm_lim,
-     &                     xkzm_mo,ck0_o,xkzm_ho, xkzm_ml, xkzm_hl, 
-     &                     xkzm_mi, xkzm_hi
+     &                     xkzm_mo,ck0_o, xkzm_ho, xkzm_ml, xkzm_hl, 
+     &                     xkzm_mi, xkzm_hi, ce0_o, afrac_o, ch0_o
       real(kind=kind_phys) dv(im,km),     du(im,km),
      &                     tdt(im,km),    rtg(im,km,ntrac),
      &                     u1(ix,km),     v1(ix,km),
@@ -773,10 +774,10 @@
          ntcw_new = ntcw-1
       endif
 ! EDMF parameterization Siebesma et al.(2007) 
-      call mfpblt(im,ix,km,kmpbl,ntcw_new,ntrac1,dt2,
+      call mfpblt(im,ix,islimsk,km,kmpbl,ntcw_new,ntrac1,dt2,
      &    pcnvflg,zl,zm,q1,t1,u1,v1,plyr,pix,thlx,thvx,
      &    gdx,hpbl,kpbl,vpert,buou,xmf,
-     &    tcko,qcko,ucko,vcko,xlamue)
+     &    tcko,qcko,ucko,vcko,xlamue,ce0_o, afrac_o)
 ! mass-flux parameterization for stratocumulus-top-induced turbulence mixing
       call mfscu(im,ix,km,kmscu,ntcw_new,ntrac1,dt2,
      &    scuflg,zl,zm,q1,t1,u1,v1,plyr,pix,

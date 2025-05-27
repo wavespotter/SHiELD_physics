@@ -1,7 +1,7 @@
-      subroutine mfpblt(im,ix,km,kmpbl,ntcw,ntrac1,delt,
+      subroutine mfpblt(im,ix,islimsk, km,kmpbl,ntcw,ntrac1,delt,
      &   cnvflg,zl,zm,q1,t1,u1,v1,plyr,pix,thlx,thvx,
      &   gdx,hpbl,kpbl,vpert,buo,xmf,
-     &   tcko,qcko,ucko,vcko,xlamue)
+     &   tcko,qcko,ucko,vcko,xlamue,ce0_o, a_o)
 !
       use machine , only : kind_phys
       use funcphys , only : fpvs
@@ -14,9 +14,9 @@
 !
       integer              im, ix, km, kmpbl, ntcw, ntrac1
 !    &,                    me
-      integer              kpbl(im)
+      integer              kpbl(im), islimsk(im)
       logical              cnvflg(im)
-      real(kind=kind_phys) delt
+      real(kind=kind_phys) delt, ce0_o, a_o
       real(kind=kind_phys) q1(ix,km,ntrac1),
      &                     t1(ix,km),  u1(ix,km), v1(ix,km),
      &                     plyr(im,km),pix(im,km),thlx(im,km),
@@ -40,7 +40,7 @@ c  local variables and arrays
      &                     alp,     a1,      pgcon,
      &                     qmin,    qlmin,   xmmx,    rbint,
      &                     tem,     tem1,    tem2,
-     &                     ptem,    ptem1,   ptem2
+     &                     ptem,    ptem1,   ptem2, ce, afrac
 !
       real(kind=kind_phys) elocp,   el2orc,  qs,      es,
      &                     tlu,     gamma,   qlu,
@@ -102,15 +102,20 @@ c  local variables and arrays
 !
       do k = 1, kmpbl
         do i=1,im
+          if (islimsk(i) == 0) then
+            ce = ce0_o
+          else
+            ce = ce0
+          end if
           if(cnvflg(i)) then
             dz = zl(i,k+1) - zl(i,k)
             if(k < kpbl(i)) then
               ptem = 1./(zm(i,k)+dz)
               tem = max((hpbl(i)-zm(i,k)+dz) ,dz)
               ptem1 = 1./tem
-              xlamue(i,k) = ce0 * (ptem+ptem1)
+              xlamue(i,k) = ce * (ptem+ptem1)
             else 
-              xlamue(i,k) = ce0 / dz
+              xlamue(i,k) = ce / dz
             endif
             xlamuem(i,k) = cm * xlamue(i,k)
           endif
@@ -280,12 +285,17 @@ c  local variables and arrays
       do k = 1, kmpbl
         do i = 1, im
           if (cnvflg(i) .and. k < kpbl(i)) then
+             if (islimsk(i) == 0) then
+              afrac = a_o
+             else
+              afrac = a1
+             end if
              if(wu2(i,k) > 0.) then
                tem = sqrt(wu2(i,k))
              else
                tem = 0.
              endif
-             xmf(i,k) = a1 * tem
+             xmf(i,k) = afrac * tem
           endif
         enddo
       enddo
@@ -307,7 +317,12 @@ c  local variables and arrays
 !
       do i = 1, im
         if(cnvflg(i)) then
-          if (sigma(i) > a1) then
+          if (islimsk(i) == 0) then
+            afrac = a_o
+          else
+            afrac = a1
+          end if
+          if (sigma(i) > afrac) then
             scaldfunc(i) = (1.-sigma(i)) * (1.-sigma(i))
             scaldfunc(i) = max(min(scaldfunc(i), 1.0), 0.)
           else
