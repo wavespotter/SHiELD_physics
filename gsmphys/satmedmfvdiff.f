@@ -56,7 +56,7 @@
      &                     xkzm_mo, xkzm_ho, xkzm_ml, xkzm_hl, 
      &                     xkzm_mi, xkzm_hi,
      &                     alpha_stable, alpha_unstable,ce0_o, afrac_o,
-     &                     ch0_o
+     &                     ch0_o, ck0_o
       real(kind=kind_phys) dv(im,km),     du(im,km),
      &                     tdt(im,km),    rtg(im,km,ntrac),
      &                     u1(ix,km),     v1(ix,km),
