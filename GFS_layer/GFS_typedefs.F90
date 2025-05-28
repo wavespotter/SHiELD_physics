@@ -1411,8 +1411,11 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: q_dt(:,:,:)   => null()   !< specific humidity tendency due to physics
     real (kind=kind_phys), pointer :: q_dt_int(:,:) => null()   !< vertically integrated moisture tendency due to physics, adjusted to dycore mass fraction convention
     real (kind=kind_phys), pointer :: dkt   (:,:)   => null()
+    real (kind=kind_phys), pointer :: dku   (:,:)   => null()
     real (kind=kind_phys), pointer :: flux_cg(:,:)  => null()
     real (kind=kind_phys), pointer :: flux_en(:,:)  => null()
+    real (kind=kind_phys), pointer :: flux_uup(:,:)  => null()
+    real (kind=kind_phys), pointer :: flux_vup(:,:)  => null()
     real (kind=kind_phys), pointer :: wu2_shal(:,:) => null()
     real (kind=kind_phys), pointer :: eta_shal(:,:) => null()
     real (kind=kind_phys), pointer :: co2(:,:) => null()  ! Vertically resolved CO2 concentration
