@@ -6669,6 +6669,17 @@ module FV3GFS_io_mod
     do nb = 1,nblks
        Diag(idx)%data(nb)%var3 => Gfs_diag(nb)%dkt(:,:)
     enddo
+    
+    idx = idx + 1
+    Diag(idx)%axes = 3
+    Diag(idx)%name = 'dku_pbl'
+    Diag(idx)%desc = 'instantaneous momentum diffusion coefficient'
+    Diag(idx)%unit = 'm**2/s'
+    Diag(idx)%mod_name = 'gfs_phys'
+    allocate (Diag(idx)%data(nblks))
+    do nb = 1,nblks
+       Diag(idx)%data(nb)%var3 => Gfs_diag(nb)%dku(:,:)
+    enddo
 
     idx = idx + 1
     Diag(idx)%axes = 3

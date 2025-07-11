@@ -1403,6 +1403,7 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: q_dt(:,:,:)   => null()   !< specific humidity tendency due to physics
     real (kind=kind_phys), pointer :: q_dt_int(:,:) => null()   !< vertically integrated moisture tendency due to physics, adjusted to dycore mass fraction convention
     real (kind=kind_phys), pointer :: dkt   (:,:)   => null()
+    real (kind=kind_phys), pointer :: dku   (:,:)   => null()
     real (kind=kind_phys), pointer :: flux_cg(:,:)  => null()
     real (kind=kind_phys), pointer :: flux_en(:,:)  => null()
     real (kind=kind_phys), pointer :: wu2_shal(:,:) => null()
@@ -4113,6 +4114,7 @@ end subroutine overrides_create
       allocate (Diag%q_dt   (IM,Model%levs,oz_coeff+5))
       allocate (Diag%q_dt_int   (IM,oz_coeff+5))
       allocate (Diag%dkt    (IM,Model%levs))
+      allocate (Diag%dku    (IM,Model%levs))
       allocate (Diag%flux_cg(IM,Model%levs))
       allocate (Diag%flux_en(IM,Model%levs))
       allocate (Diag%wu2_shal(IM,Model%levs))
@@ -4424,6 +4426,7 @@ end subroutine overrides_create
       Diag%dt3dt   = zero
       Diag%dq3dt   = zero
       Diag%dkt     = zero
+      Diag%dku     = zero
       Diag%flux_cg = zero
       Diag%flux_en = zero
       Diag%wu2_shal= zero

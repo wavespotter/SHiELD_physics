@@ -36,7 +36,7 @@
      &     dspheat,dusfc,dvsfc,dtsfc,dqsfc,hpbl,
      &     kinver,xkzm_mo,xkzm_ho,xkzm_ml,xkzm_hl,xkzm_mi,xkzm_hi,
      &     xkzm_s,xkzinv,do_dk_hb19,xkzm_lim,xkgdx,
-     &     rlmn, rlmx, cap_k0_land, dkt_out)
+     &     rlmn, rlmx, cap_k0_land, dkt_out, dku_out)
 !
       use machine  , only : kind_phys
       use funcphys , only : fpvs
@@ -79,7 +79,8 @@
 !
       logical dspheat, cap_k0_land, do_dk_hb19
 !          flag for tke dissipative heating
-      real(kind=kind_phys),dimension(1:im,1:km),intent(OUT)::dkt_out
+      real(kind=kind_phys),dimension(1:im,1:km),intent(OUT)::dkt_out,
+     &                     dku_out
 
 !
 !----------------------------------------------------------------------
@@ -205,6 +206,8 @@
       parameter(rchck=1.5,cdtn=25.)
 
       elmx = rlmx
+      dkt_out = 0.
+      dku_out = 0.
 !
 !************************************************************************
 !
@@ -979,6 +982,7 @@
       do k=1,km1
         do i=1,im
            dkt_out(i,k) = dkt(i,k)
+           dku_out(i,k) = dku(i,k)
        enddo
       enddo
 

@@ -513,7 +513,7 @@ module module_physics_driver
 
       real(kind=kind_phys), dimension(size(Grid%xlon,1),Model%levs) ::  &
           del, rhc, dtdt, dudt, dvdt, gwdcu, gwdcv, dtdtc, rainp,       &
-          ud_mf, dd_mf, dt_mf, prnum, dkt, flux_cg, flux_en,            &
+          ud_mf, dd_mf, dt_mf, prnum, dkt, dku, flux_cg, flux_en,            &
           prefluxw, prefluxr, prefluxi, prefluxs, prefluxg,             &
           sigmatot, sigmafrac, specific_heat, final_dynamics_delp, dtdt_gwdps, &
           wu2_shal,  eta_shal 
@@ -1695,7 +1695,7 @@ module module_physics_driver
                    Model%xkzm_ml, Model%xkzm_hl, Model%xkzm_mi, Model%xkzm_hi,  & 
                    Model%xkzm_s,  Model%xkzminv, Model%do_dk_hb19,              &
                    Model%xkzm_lim, Model%xkgdx,                                 &
-                   Model%rlmn, Model%rlmx, Model%cap_k0_land, dkt)
+                   Model%rlmn, Model%rlmx, Model%cap_k0_land, dkt, dku)
 
              elseif (Model%isatmedmf == 1) then   
                 do i=1,im
@@ -1910,6 +1910,7 @@ module module_physics_driver
          do k=1,levs
          do i=1,im
             Diag%dkt(i,k) = dkt(i,k)
+            Diag%dku(i,k) = dku(i,k)
          enddo
          enddo
 
