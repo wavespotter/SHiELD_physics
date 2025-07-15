@@ -797,18 +797,23 @@
 !
             if (islimsk(i) == 0) then
               ckz(i,k) = ck1 + (ck0_o-ck1)*exp(ptem)
+              ckz(i,k) = min(ckz(i,k),ck0_o)
+              ckz(i,k) = max(ckz(i,k),ck1)
             else
-              ckz(i,k) = ck1 + (ck0_o-ck1)*exp(ptem)
+              ckz(i,k) = ck1 + (ck0-ck1)*exp(ptem)
+              ckz(i,k) = min(ckz(i,k),ck0)
+              ckz(i,k) = max(ckz(i,k),ck1)
             end if
-            ckz(i,k) = min(ckz(i,k),ck0)
-            ckz(i,k) = max(ckz(i,k),ck1)
+           
             if (islimsk(i) == 0) then
               chz(i,k) = ch1 + (ch0_o-ch1)*exp(ptem)
+              chz(i,k) = min(chz(i,k),ch0_o)
+              chz(i,k) = max(chz(i,k),ch1)
             else
               chz(i,k) = ch1 + (ch0-ch1)*exp(ptem)
+              chz(i,k) = min(chz(i,k),ch0)
+              chz(i,k) = max(chz(i,k),ch1)
             end if
-            chz(i,k) = min(chz(i,k),ch0)
-            chz(i,k) = max(chz(i,k),ch1)
           endif
         enddo
       enddo
