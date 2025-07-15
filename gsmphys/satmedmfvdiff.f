@@ -36,7 +36,7 @@
      &     dspheat,dusfc,dvsfc,dtsfc,dqsfc,hpbl,
      &     kinver,xkzm_mo,xkzm_ho,xkzm_ml,xkzm_hl,xkzm_mi,xkzm_hi,
      &     xkzm_s,xkzinv,ck0_o,ce0_o, afrac_o,do_dk_hb19,xkzm_lim,xkgdx,
-     &     rlmn, rlmx, cap_k0_land, dkt_out,flux_uup,flux_vup,dku_out,
+     &     rlmn, rlmx, cap_k0_land, dkt_out, dku_out,flux_uup,flux_vup,
      &     alpha_stable, alpha_unstable, tune_ocean_surface_layer)
 !
       use machine  , only : kind_phys
