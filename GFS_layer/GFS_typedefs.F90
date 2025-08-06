@@ -1349,6 +1349,8 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: v1     (:)    => null()   !< layer 1 merdional wind (m/s)
     real (kind=kind_phys), pointer :: chh    (:)    => null()   !< thermal exchange coefficient
     real (kind=kind_phys), pointer :: cmm    (:)    => null()   !< momentum exchange coefficient
+    real (kind=kind_phys), pointer :: fm10   (:)    => null()   !< 10 meter non-dimensional wind shear
+    real (kind=kind_phys), pointer :: cd     (:)    => null()   !< drag coefficient for momentum
     real (kind=kind_phys), pointer :: dlwsfci(:)    => null()   !< instantaneous sfc dnwd lw flux ( w/m**2 )
     real (kind=kind_phys), pointer :: ulwsfci(:)    => null()   !< instantaneous sfc upwd lw flux ( w/m**2 )
     real (kind=kind_phys), pointer :: dswsfci(:)    => null()   !< instantaneous sfc dnwd sw flux ( w/m**2 )
