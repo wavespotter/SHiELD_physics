@@ -1202,7 +1202,7 @@ module module_physics_driver
                  Sfcprop%charnock,                                  &              
                  fm10_neutral,                                      &  
                  Sfcprop%uustar,                                    &
-                 wind,  Tbd%phy_f2d(1,Model%num_p2d), fm10, fh2,    &
+                 wind,  Tbd%phy_f2d(1,Model%num_p2d), Diag%fm10, fh2,    &
                  sigmaf, vegtype, Sfcprop%shdmax, Model%ivegsrc,    &
                  tsurf, flag_iter, Model%redrag, Model%z0s_max,     &
                  Model%do_z0_moon, Model%do_z0_hwrf15,              &
@@ -1217,7 +1217,7 @@ module module_physics_driver
                  Sfcprop%snowd, Sfcprop%tsfc,  Sfcprop%zorl, cd,    &
                  cdq, rb, Statein%prsl(1,1), work3, islmsk, stress, &
                  Sfcprop%ffmm,  Sfcprop%ffhh, Sfcprop%uustar,       &
-                 wind,  Tbd%phy_f2d(1,Model%num_p2d), fm10, fh2,    &
+                 wind,  Tbd%phy_f2d(1,Model%num_p2d), Diag%fm10, fh2,    &
                  sigmaf, vegtype, Sfcprop%shdmax, Model%ivegsrc,    &
                  tsurf, flag_iter, Model%redrag, Model%czil_sfc,    &
                  Model%z0s_max,     &
@@ -1226,6 +1226,7 @@ module module_physics_driver
                  Model%wind_th_hwrf, Diag%zol)
             endif
             Diag%rb = rb
+            Diag%cd = cd
          !endif
 
          !endif
@@ -1484,7 +1485,7 @@ module module_physics_driver
               Statein%tgrs, Statein%qgrs, Sfcprop%tsfc, qss,   &
               Sfcprop%f10m, Diag%u10m, Diag%v10m,        &
               Sfcprop%t2m, Sfcprop%q2m, work3, evap,           &
-              Sfcprop%ffmm, Sfcprop%ffhh, fm10, fh2, &
+              Sfcprop%ffmm, Sfcprop%ffhh, Diag%fm10, fh2, &
               Sfcprop%u10m, Sfcprop%v10m,&
               fm10_neutral, Diag%u10n, Diag%v10n, &
               Sfcprop%u10n, Sfcprop%v10n, Sfcprop%rhoa)  
@@ -3850,7 +3851,7 @@ module module_physics_driver
                        Stateout%gt0, Stateout%gq0, Sfcprop%tsfc, qss,   &
                        Sfcprop%f10m, Diag%u10m, Diag%v10m, Sfcprop%t2m, &
                        Sfcprop%q2m, work3, evap, Sfcprop%ffmm,          &
-                       Sfcprop%ffhh, fm10, fh2, &
+                       Sfcprop%ffhh, Diag%fm10, fh2, &
                        Sfcprop%u10m, Sfcprop%v10m,&
                        fm10_neutral, Diag%u10n, Diag%v10n, &
                        Sfcprop%u10n, Sfcprop%v10n, Sfcprop%rhoa)  

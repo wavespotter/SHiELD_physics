@@ -4792,6 +4792,31 @@ module FV3GFS_io_mod
       Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%zol(:)
     enddo
 
+
+    idx = idx + 1
+    Diag(idx)%axes = 2
+    Diag(idx)%name = 'cd'
+    Diag(idx)%desc = 'Momentum drag coefficient'
+    Diag(idx)%unit = '1'
+    Diag(idx)%mod_name = 'gfs_phys'
+    Diag(idx)%intpl_method = 'bilinear'
+    allocate (Diag(idx)%data(nblks))
+    do nb = 1,nblks
+      Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%cd(:)
+    enddo
+
+
+    idx = idx + 1
+    Diag(idx)%axes = 2
+    Diag(idx)%name = 'fm10'
+    Diag(idx)%desc = 'fm10 parameter from SL scheme at 10 meters'
+    Diag(idx)%unit = '1'
+    Diag(idx)%mod_name = 'gfs_sfc'
+    allocate (Diag(idx)%data(nblks))
+    do nb = 1,nblks
+      Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%fm10(:)
+    enddo
+
     idx = idx + 1
     Diag(idx)%axes = 2
     Diag(idx)%name = 'dpt2m'
@@ -7000,7 +7025,7 @@ module FV3GFS_io_mod
     Diag(idx)%axes = 2
     Diag(idx)%name = 'f10m'
     Diag(idx)%desc = '10-meter wind speed divided by lowest model wind speed'
-    Diag(idx)%unit = 'N/A'
+    Diag(idx)%unit = '1'
     Diag(idx)%mod_name = 'gfs_sfc'
     allocate (Diag(idx)%data(nblks))
     do nb = 1,nblks
@@ -7033,7 +7058,7 @@ module FV3GFS_io_mod
     Diag(idx)%axes = 2
     Diag(idx)%name = 'ffhh'
     Diag(idx)%desc = 'fh parameter from PBL scheme'
-    Diag(idx)%unit = 'XXX'
+    Diag(idx)%unit = '1'
     Diag(idx)%mod_name = 'gfs_sfc'
     allocate (Diag(idx)%data(nblks))
     do nb = 1,nblks
@@ -7043,8 +7068,8 @@ module FV3GFS_io_mod
     idx = idx + 1
     Diag(idx)%axes = 2
     Diag(idx)%name = 'ffmm'
-    Diag(idx)%desc = 'fm parameter from PBL scheme'
-    Diag(idx)%unit = 'XXX'
+    Diag(idx)%desc = 'fm parameter from SL scheme'
+    Diag(idx)%unit = '1'
     Diag(idx)%mod_name = 'gfs_sfc'
     allocate (Diag(idx)%data(nblks))
     do nb = 1,nblks
@@ -7055,7 +7080,7 @@ module FV3GFS_io_mod
     Diag(idx)%axes = 2
     Diag(idx)%name = 'uustar'
     Diag(idx)%desc = 'uustar surface frictional wind'
-    Diag(idx)%unit = 'XXX'
+    Diag(idx)%unit = 'm/s'
     Diag(idx)%mod_name = 'gfs_sfc'
     allocate (Diag(idx)%data(nblks))
     do nb = 1,nblks

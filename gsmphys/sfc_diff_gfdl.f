@@ -617,6 +617,7 @@
               fhs    = fh - ph
               hl1    = fms * fms * rb / fhs
               hl1    = min(max(hl1, ztmin1), ztmax1)
+              zol     = hl1
             endif
 !
 !  second iteration
@@ -648,6 +649,7 @@
             if(abs(olinf) <= tem1) then
               hlinf = -z1 / tem1
               hlinf = min(max(hlinf,ztmin1),ztmax1)
+              zol     = hlinf
             endif
 !
 !  get pm and ph

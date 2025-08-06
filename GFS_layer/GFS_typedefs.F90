@@ -4071,6 +4071,8 @@ end subroutine overrides_create
     allocate (Diag%spfhmin (IM))
     allocate (Diag%spfhmax (IM))
     allocate (Diag%u10mmax (IM))
+    allocate (Diag%fm10    (IM))
+    allocate (Diag%cd      (IM))
     allocate (Diag%v10mmax (IM))
     allocate (Diag%wind10mmax (IM))
     allocate (Diag%rain    (IM))
@@ -4376,6 +4378,8 @@ end subroutine overrides_create
     Diag%spfhmin = huge
     Diag%spfhmax = zero
     Diag%u10mmax  = zero
+    Diag%fm10     = zero
+    Diag%cd       = zero
     Diag%v10mmax  = zero
     Diag%wind10mmax = zero
     Diag%rain    = zero
