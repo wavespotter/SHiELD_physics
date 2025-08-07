@@ -4811,7 +4811,7 @@ module FV3GFS_io_mod
     Diag(idx)%name = 'fm10'
     Diag(idx)%desc = 'fm10 parameter from SL scheme at 10 meters'
     Diag(idx)%unit = '1'
-    Diag(idx)%mod_name = 'gfs_sfc'
+    Diag(idx)%mod_name = 'gfs_phys'
     allocate (Diag(idx)%data(nblks))
     do nb = 1,nblks
       Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%fm10(:)
