@@ -484,7 +484,9 @@ module module_physics_driver
            dtsfc_cice, dqsfc_cice, dusfc_cice, dvsfc_cice, ulwsfc_cice, &
            tisfc_cice, tsea_cice, hice_cice, fice_cice,                 &
            !--- for CS-convection
-           wcbmax
+           wcbmax,                                                      &           
+           !--- for gust
+           monin_obukhov_length
            
       logical, dimension(size(Grid%xlon,1))                ::           &
            wet, dry,              icy
@@ -1209,7 +1211,8 @@ module module_physics_driver
                  Model%do_z0_hwrf17, Model%do_z0_hwrf17_hwonly,     &
                  Model%wind_th_hwrf,                                &
                  Model%alpha_stable, Model%alpha_unstable,          &
-                 Model%tune_ocean_surface_layer, Diag%zol)
+                 Model%tune_ocean_surface_layer, Diag%zol,          & 
+                 Model%add_w_freeconv)
             else
 ! GFS original sfc_diff modified by kgao 
             call sfc_diff (im,Statein%pgr, Statein%ugrs, Statein%vgrs,&
@@ -1490,6 +1493,17 @@ module module_physics_driver
               fm10_neutral, Diag%u10n, Diag%v10n, &
               Sfcprop%u10n, Sfcprop%v10n, Sfcprop%rhoa)  
       !endif
+      monin_obukhov_length = Diag%zlvl / Diag%zol
+      call compute_gust(im, Diag%u10m, Diag%v10m, Sfcprop%uustar, &
+            monin_obukhov_length, Model%gust_parameter, &
+            Diag%gust)
+      do i=1, im
+           !find max wind gust
+           tem = Diag%gust(i)
+           if (tem > Diag%gustmax(i)) then
+              Diag%gustmax(i) = tem
+           endif
+      end do
 
       Tbd%phy_f2d(:,Model%num_p2d) = 0.0
 

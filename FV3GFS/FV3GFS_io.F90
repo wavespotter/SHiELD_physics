@@ -4766,6 +4766,32 @@ module FV3GFS_io_mod
     do nb = 1,nblks
       Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%v10n(:)
     enddo
+
+    idx = idx + 1
+    Diag(idx)%axes = 2
+    Diag(idx)%name = '10mgust'
+    Diag(idx)%desc = '10-meter wind gust [m/s]'
+    Diag(idx)%unit = 'm/s'
+    Diag(idx)%mod_name = 'gfs_phys'
+    Diag(idx)%intpl_method = 'bilinear'
+    allocate (Diag(idx)%data(nblks))
+    do nb = 1,nblks
+      Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%gust(:)
+    enddo
+
+
+    idx = idx + 1
+    Diag(idx)%axes = 2
+    Diag(idx)%name = '10mgustmax'
+    Diag(idx)%desc = 'maximum 10-meter wind gust [m/s]'
+    Diag(idx)%unit = 'm/s'
+    Diag(idx)%mod_name = 'gfs_phys'
+    Diag(idx)%intpl_method = 'bilinear'
+    allocate (Diag(idx)%data(nblks))
+    do nb = 1,nblks
+      Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%gustmax(:)
+    enddo
+
     !Sofar added: end
 
     idx = idx + 1
