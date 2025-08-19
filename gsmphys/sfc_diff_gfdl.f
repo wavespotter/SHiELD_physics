@@ -9,7 +9,7 @@
       ! Christie Hegermiller, Sofar Ocean
 
       subroutine sfc_diff_gfdl(im,ps,u1,v1,t1,q1,z1,
-     &                    snwdph,tskin,z0rl,ztrl,cm,ch,rb,
+     &                    snwdph,tskin,qss,z0rl,ztrl,cm,ch,rb,
      &                    prsl1,prslki,islimsk,
      &                    stress,fm,fh,
      &                    charnock,                                                           
@@ -40,7 +40,7 @@
 
       real(kind=kind_phys), dimension(im)::ps,  u1, v1, t1, q1, z1
      &,                                    tskin, z0rl, ztrl, cm, ch, rb
-     &,                                    prsl1, prslki, stress
+     &,                                    prsl1, prslki, stress, qss
      &,                                    fm, fh
      &,                                    charnock                     ! Sofar added Spring 2023
      &,                                    ustar, wind, w_conv 
@@ -67,7 +67,8 @@
      &                     hl110,  hlt,    hltinf, olinf,
      &                     restar, czilc,  tem1,   tem2,
      &                     u10m, v10m, ws10m, ws10m_moon,         !kgao
-     &                     z0_1, zt_1, fm1, fh1, ustar_1, ztmax_1 !kgao
+     &                     z0_1, zt_1, fm1, fh1, ustar_1, ztmax_1,!kgao
+     &                     th1, dt1, dq1
 !
 
       real(kind=kind_phys),intent(in   ) :: z0s_max, wind_th_hwrf ! kgao 
@@ -99,8 +100,8 @@
 
           ! update wind speed with free convective velocity
           if (add_w_freeconv) then
-            dt1 = th1 - Sfcprop%tsfc(i)
-            dq1 = qs1 - Sfcprop%qsfc(i)
+            dt1 = th1 - tskin(i)
+            dq1 = qs1 - qss(i)
             call compute_w_freeconv(th1, dt1, dq1, ustar(i), 
      &            fh(i), w_conv(i))
             wind(i) = sqrt(wind(i) * wind(i) + w_conv(i) * w_conv(i))

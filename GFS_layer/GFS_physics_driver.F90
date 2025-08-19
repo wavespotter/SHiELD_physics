@@ -1198,7 +1198,7 @@ module module_physics_driver
 ! a new and more flexible version of sfc_diff by kgao
             call sfc_diff_gfdl(im,Statein%pgr, Statein%ugrs, Statein%vgrs,&
                  Statein%tgrs, Statein%qgrs, Diag%zlvl, Sfcprop%snowd, &
-                 Sfcprop%tsfc, Sfcprop%zorl, Sfcprop%ztrl, cd,      &
+                 Sfcprop%tsfc, Sfcprop%qsfc, Sfcprop%zorl, Sfcprop%ztrl, cd,      &
                  cdq, rb, Statein%prsl(1,1), work3, islmsk, stress, &
                  Sfcprop%ffmm,  Sfcprop%ffhh,                       &
                  Sfcprop%charnock,                                  &              
