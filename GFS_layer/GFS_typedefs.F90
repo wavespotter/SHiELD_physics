@@ -220,8 +220,6 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: v10m   (:)   => null()  !< neutral V10 wind in m/s       ! Sofar added 11/17/23
     real (kind=kind_phys), pointer :: u10n   (:)   => null()  !< neutral U10 wind in m/s       ! Sofar added 9/22/23
     real (kind=kind_phys), pointer :: v10n   (:)   => null()  !< neutral V10 wind in m/s       ! Sofar added 9/22/23
-    real (kind=kind_phys), pointer :: gust   (:)   => null()  !< 10-m wind gust m/s
-    real (kind=kind_phys), pointer :: gustmax(:)   => null()  !< 10-m maximum wind gust m/s
     real (kind=kind_phys), pointer :: ztrl   (:)   => null()  !< surface roughness for t and q in cm
     real (kind=kind_phys), pointer :: fice   (:)   => null()  !< ice fraction over open water grid
     real (kind=kind_phys), pointer :: hprim  (:)   => null()  !< topographic standard deviation in m            !
@@ -1308,6 +1306,8 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: runoff (:)    => null()   !< total water runoff
     real (kind=kind_phys), pointer :: ep     (:)    => null()   !< potential evaporation
     real (kind=kind_phys), pointer :: cldwrk (:)    => null()   !< cloud workfunction (valid only with sas)
+    real (kind=kind_phys), pointer :: gust   (:)    => null()   !< 10-m wind gust m/s
+    real (kind=kind_phys), pointer :: gustmax(:)    => null()   !< 10-m maximum wind gust m/s
     real (kind=kind_phys), pointer :: dugwd  (:)    => null()   !< vertically integrated u change by OGWD
     real (kind=kind_phys), pointer :: dvgwd  (:)    => null()   !< vertically integrated v change by OGWD
     real (kind=kind_phys), pointer :: psmean (:)    => null()   !< surface pressure (kPa)
