@@ -19,7 +19,7 @@ subroutine compute_gust(im, u_10m, v_10m, ustar, zol, z1, gust_parameter, gust)
   ! where zol > 0, multiply by similarity function f(H/L)
   where (zol > 0.0_kind_phys)
     gust = gust * &
-           (max(1.0_kind_phys, 1.0_kind_phys - 1.0_kind_phys / 24.0_kind_phys * H_o_z * zol))**(1.0_kind_phys/3.0_kind_phys)
+           (max(0.0_kind_phys, 1.0_kind_phys - 1.0_kind_phys / 24.0_kind_phys * H_o_z * zol))**(1.0_kind_phys/3.0_kind_phys)
   end where
 
 
