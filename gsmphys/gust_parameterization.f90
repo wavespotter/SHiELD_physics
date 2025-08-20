@@ -8,7 +8,7 @@ subroutine compute_gust(im, u_10m, v_10m, ustar, zol, z1, gust_parameter, gust)
   real(kind=kind_phys), intent(out) :: gust(im)
 
   real(kind=kind_phys), parameter :: PBL_HEIGHT = 1000.0_kind_phys ! in meters
-  real(kind=kind_phys) :: H_o_z
+  real(kind=kind_phys) :: H_o_z(im)
 
   ! Follows the IFS gust implementation (see Eq. 3.109 in physics documentation for cycle Cy49r1)
 
