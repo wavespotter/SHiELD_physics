@@ -4,7 +4,8 @@ subroutine compute_gust(im, u_10m, v_10m, ustar, zol, z1, gust_parameter, gust)
 
   integer, intent(in) :: im
   real(kind=kind_phys), dimension(im), intent(in) :: u_10m, v_10m, ustar, &
-                                      zol, z1, gust_parameter
+                                      zol, z1
+  real(kind=kind_phys), intent(in) :: gust_parameter
   real(kind=kind_phys), dimension(im), intent(out) :: gust
 
   real(kind=kind_phys), parameter :: PBL_HEIGHT = 1000.0_kind_phys ! in meters
