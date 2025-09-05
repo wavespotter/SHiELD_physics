@@ -1492,8 +1492,8 @@ module module_physics_driver
               Sfcprop%u10n, Sfcprop%v10n, Sfcprop%rhoa)  
       !endif
       ! get 100-m wind components using linear interpolation same as in FV3, then get wind gust at 10 and 100 m
-      call interpolate_z(im, npz, 100., Statein%phii, Statein%ugrs, Diag%u100m)
-      call interpolate_z(im, npz, 100., Statein%phii, Statein%vgrs, Diag%v100m)
+      call interpolate_z(im, levs, 100., Statein%phii, Statein%ugrs, Diag%u100m)
+      call interpolate_z(im, levs, 100., Statein%phii, Statein%vgrs, Diag%v100m)
       call compute_gust(im, Diag%u10m, Diag%v10m, Sfcprop%uustar, &
             Diag%zol, Diag%zlvl, Model%gust_parameter, &
             Diag%gust10m)
@@ -4371,9 +4371,9 @@ module module_physics_driver
         zm(k) = 0.5*(hght(i,k)+hght(i,k+1))
       enddo
       if( zl >= zm(1) ) then
-        a2(i,j) = a3(i,1)
+        a2(i) = a3(i,1)
       elseif ( zl <= zm(km) ) then
-        a2(i,j) = a3(i,km)
+        a2(i) = a3(i,km)
       else
         do k=1,km-1
           if( zl <= zm(k) .and. zl >= zm(k+1) ) then
