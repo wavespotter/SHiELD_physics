@@ -1,9 +1,9 @@
-subroutine compute_gust(im, u_10m, v_10m, ustar, zol, z1, gust_parameter, gust)
+subroutine compute_gust(im, u, v, ustar, zol, z1, gust_parameter, gust)
   use machine, only : kind_phys
   implicit none
 
   integer, intent(in) :: im
-  real(kind=kind_phys), dimension(im), intent(in) :: u_10m, v_10m, ustar, &
+  real(kind=kind_phys), dimension(im), intent(in) :: u, v, ustar, &
                                       zol, z1
   real(kind=kind_phys), intent(in) :: gust_parameter
   real(kind=kind_phys), dimension(im), intent(out) :: gust
@@ -23,7 +23,7 @@ subroutine compute_gust(im, u_10m, v_10m, ustar, zol, z1, gust_parameter, gust)
     if (zol(i) > 0.0_kind_phys) then
       gust(i) = gust(i) * (max(0.0_kind_phys, 1.0_kind_phys - 1.0_kind_phys / 24.0_kind_phys * H_o_z(i) * zol(i)))**(1.0_kind_phys/3.0_kind_phys)
     end if
-    gust(i) = gust(i) + sqrt(u_10m(i)**2 + v_10m(i)**2)
+    gust(i) = gust(i) + sqrt(u(i)**2 + v(i)**2)
   end do
 
   

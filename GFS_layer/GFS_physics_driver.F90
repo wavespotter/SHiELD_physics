@@ -1491,15 +1491,24 @@ module module_physics_driver
               fm10_neutral, Diag%u10n, Diag%v10n, &
               Sfcprop%u10n, Sfcprop%v10n, Sfcprop%rhoa)  
       !endif
-     
+      ! get 100-m wind components using linear interpolation same as in FV3, then get wind gust at 10 and 100 m
+      call interpolate_z(im, npz, 100., wz, Statein%ugrs, Diag%u100m)
+      call interpolate_z(im, npz, 100., wz, Statein%vgrs, Diag%v100m)
       call compute_gust(im, Diag%u10m, Diag%v10m, Sfcprop%uustar, &
             Diag%zol, Diag%zlvl, Model%gust_parameter, &
-            Diag%gust)
+            Diag%gust10m)
+      call compute_gust(im, Diag%u100m, Diag%v100m, Sfcprop%uustar, &
+            Diag%zol, Diag%zlvl, Model%gust_parameter, &
+            Diag%gust100m)
       do i=1, im
-           !find max wind gust
-           tem = Diag%gust(i)
-           if (tem > Diag%gustmax(i)) then
-              Diag%gustmax(i) = tem
+           !find max wind gusts
+           tem = Diag%gust10m(i)
+           if (tem > Diag%gustmax10m(i)) then
+              Diag%gustmax10m(i) = tem
+           endif
+           tem = Diag%gust100m(i)
+           if (tem > Diag%gustmax100m(i)) then
+              Diag%gustmax100m(i) = tem
            endif
       end do
 
@@ -4335,6 +4344,36 @@ module module_physics_driver
       enddo
 
   end subroutine compute_diagnostics_with_scaled_co2
+
+  subroutine interpolate_z(im, km, zl, hght, a3, a2)
+    implicit none
+    integer,  intent(in):: im, km
+    real, intent(in):: hght(im,km+1)  ! hght(k) > hght(k+1)
+    real, intent(in):: a3(im,km)
+    real, intent(in):: zl
+    real, intent(out):: a2(im)
+    ! local:
+    real zm(km)
+    integer i,k
+
+    do i=1,im
+      do k=1,km
+        zm(k) = 0.5*(hght(i,k)+hght(i,k+1))
+      enddo
+      if( zl >= zm(1) ) then
+        a2(i,j) = a3(i,1)
+      elseif ( zl <= zm(km) ) then
+        a2(i,j) = a3(i,km)
+      else
+        do k=1,km-1
+          if( zl <= zm(k) .and. zl >= zm(k+1) ) then
+            a2(i) = a3(i,k) + (a3(i,k+1)-a3(i,k))*(zm(k)-zl)/(zm(k)-zm(k+1))
+            exit
+          endif
+        enddo
+      endif
+    end do
+ end subroutine interpolate_z
 !> @}
 
 end module module_physics_driver

@@ -1496,7 +1496,25 @@ module physics_diag_layer
     IPD_Diag(idx)%zhour          = Model%zhour
     IPD_Diag(idx)%fcst_hour      = Model%fhour
     do nb = 1,nblks
-      IPD_Diag(idx)%data(nb)%var2p => Diag(nb)%gustmax
+      IPD_Diag(idx)%data(nb)%var2p => Diag(nb)%gustmax10m
+    enddo
+
+    !---wind100mmax
+    idx = idx + 1
+    IPD_Diag(idx)%name           = 'gust100mmaxn'
+    IPD_Diag(idx)%output_name    = 'gust100mmax'
+    IPD_Diag(idx)%mod_name       = 'physics'
+    IPD_Diag(idx)%file_name      = 'flx'
+    IPD_Diag(idx)%desc           = 'maximum wind gust (m/s) at 100 m above ground'
+    IPD_Diag(idx)%unit           = 'm/s'
+    IPD_Diag(idx)%type_stat_proc = 'max'
+    IPD_Diag(idx)%level_type     = '100 m above grnd'
+    IPD_Diag(idx)%level          = 1
+    IPD_Diag(idx)%cnvfac         = cn_one
+    IPD_Diag(idx)%zhour          = Model%zhour
+    IPD_Diag(idx)%fcst_hour      = Model%fhour
+    do nb = 1,nblks
+      IPD_Diag(idx)%data(nb)%var2p => Diag(nb)%gustmax100m
     enddo
 
     !---rain

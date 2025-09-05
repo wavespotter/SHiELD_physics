@@ -4742,6 +4742,30 @@ module FV3GFS_io_mod
       Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%v10m(:)
     enddo
 
+    idx = idx + 1
+    Diag(idx)%axes = 2
+    Diag(idx)%name = 'u100m'
+    Diag(idx)%desc = '100 meter u wind [m/s]'
+    Diag(idx)%unit = 'm/s'
+    Diag(idx)%mod_name = 'gfs_phys'
+    Diag(idx)%intpl_method = 'vector_bilinear'
+    allocate (Diag(idx)%data(nblks))
+    do nb = 1,nblks
+      Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%u100m(:)
+    enddo
+
+    idx = idx + 1
+    Diag(idx)%axes = 2
+    Diag(idx)%name = 'v100m'
+    Diag(idx)%desc = '100 meter v wind [m/s]'
+    Diag(idx)%unit = 'm/s'
+    Diag(idx)%mod_name = 'gfs_phys'
+    Diag(idx)%intpl_method = 'vector_bilinear'
+    allocate (Diag(idx)%data(nblks))
+    do nb = 1,nblks
+      Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%v100m(:)
+    enddo
+
     !Sofar added: start: (12/20/23)
     idx = idx + 1
     Diag(idx)%axes = 2
@@ -4776,7 +4800,7 @@ module FV3GFS_io_mod
     Diag(idx)%intpl_method = 'bilinear'
     allocate (Diag(idx)%data(nblks))
     do nb = 1,nblks
-      Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%gust(:)
+      Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%gust10m(:)
     enddo
 
 
@@ -4789,7 +4813,32 @@ module FV3GFS_io_mod
     Diag(idx)%intpl_method = 'bilinear'
     allocate (Diag(idx)%data(nblks))
     do nb = 1,nblks
-      Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%gustmax(:)
+      Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%gustmax10m(:)
+    enddo
+
+    idx = idx + 1
+    Diag(idx)%axes = 2
+    Diag(idx)%name = '100mgust'
+    Diag(idx)%desc = '100-meter wind gust [m/s]'
+    Diag(idx)%unit = 'm/s'
+    Diag(idx)%mod_name = 'gfs_phys'
+    Diag(idx)%intpl_method = 'bilinear'
+    allocate (Diag(idx)%data(nblks))
+    do nb = 1,nblks
+      Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%gust100m(:)
+    enddo
+
+
+    idx = idx + 1
+    Diag(idx)%axes = 2
+    Diag(idx)%name = '100mgustmax'
+    Diag(idx)%desc = 'maximum 100-meter wind gust [m/s]'
+    Diag(idx)%unit = 'm/s'
+    Diag(idx)%mod_name = 'gfs_phys'
+    Diag(idx)%intpl_method = 'bilinear'
+    allocate (Diag(idx)%data(nblks))
+    do nb = 1,nblks
+      Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%gustmax100m(:)
     enddo
 
     !Sofar added: end
