@@ -1492,8 +1492,8 @@ module module_physics_driver
               Sfcprop%u10n, Sfcprop%v10n, Sfcprop%rhoa)  
       !endif
       ! get 100-m wind components using linear interpolation same as in FV3, then get wind gust at 10 and 100 m
-      call interpolate_z(im, npz, 100., wz, Statein%ugrs, Diag%u100m)
-      call interpolate_z(im, npz, 100., wz, Statein%vgrs, Diag%v100m)
+      call interpolate_z(im, npz, 100., Statein%phii, Statein%ugrs, Diag%u100m)
+      call interpolate_z(im, npz, 100., Statein%phii, Statein%vgrs, Diag%v100m)
       call compute_gust(im, Diag%u10m, Diag%v10m, Sfcprop%uustar, &
             Diag%zol, Diag%zlvl, Model%gust_parameter, &
             Diag%gust10m)
@@ -4345,16 +4345,26 @@ module module_physics_driver
 
   end subroutine compute_diagnostics_with_scaled_co2
 
-  subroutine interpolate_z(im, km, zl, hght, a3, a2)
+  subroutine interpolate_z(im, km, zl, phi, a3_in, a2)
+    use physcons, only: con_g
     implicit none
     integer,  intent(in):: im, km
-    real, intent(in):: hght(im,km+1)  ! hght(k) > hght(k+1)
-    real, intent(in):: a3(im,km)
+    real, intent(in):: phi(im,km+1) ! phi(k+1) > phi(k)
+    real, intent(in):: a3_in(im,km) 
     real, intent(in):: zl
     real, intent(out):: a2(im)
     ! local:
+    real hght(im,km+1), a3(im, km) ! hght(k) > hght(k+1)
     real zm(km)
     integer i,k
+
+    ! flip z and a3
+    do k=1,km+1
+      do i=1,im
+        hght(i,k) = phi(i,km+2-k) / con_g
+        if (k <= km) a3(i,k) = a3_in(i,km+1-k)
+      enddo
+    enddo
 
     do i=1,im
       do k=1,km
