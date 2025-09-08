@@ -4603,7 +4603,6 @@ module FV3GFS_io_mod
       Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%rainc(:)
     enddo
 
-
     idx = idx + 1
     Diag(idx)%axes = 2
     Diag(idx)%name = 'precip_rate'
@@ -4612,7 +4611,7 @@ module FV3GFS_io_mod
     Diag(idx)%mod_name = 'gfs_phys'
     allocate (Diag(idx)%data(nblks))
     do nb = 1,nblks
-      Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%rain(:)/Model%dtf * 1000.
+      Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%instant_precip_rate(:)
     enddo
 
     idx = idx + 1
@@ -4623,7 +4622,7 @@ module FV3GFS_io_mod
     Diag(idx)%mod_name = 'gfs_phys'
     allocate (Diag(idx)%data(nblks))
     do nb = 1,nblks
-      Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%rainc(:)/Model%dtf * 1000.
+      Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%instant_conv_precip_rate(:)
     enddo
 
     idx = idx + 1

@@ -1324,6 +1324,8 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: wind10mmax(:) => null()   !< maximum wind speed
     real (kind=kind_phys), pointer :: rain   (:)    => null()   !< total rain at this time step
     real (kind=kind_phys), pointer :: rainc  (:)    => null()   !< convective rain at this time step
+    real (kind=kind_phys), pointer :: instant_precip_rate(:)              => null()   !< total instant. precip rate (kg/m2/s) at this time step
+    real (kind=kind_phys), pointer :: instant_conv_precip_rate(:)   => null()   !< convective instant. precip rate (kg/m2/s) at this time step
     real (kind=kind_phys), pointer :: ice    (:)    => null()   !< ice fall at this time step
     real (kind=kind_phys), pointer :: snow   (:)    => null()   !< snow fall at this time step
     real (kind=kind_phys), pointer :: graupel(:)    => null()   !< graupel fall at this time step
@@ -4100,6 +4102,8 @@ end subroutine overrides_create
     allocate (Diag%gustmax100m (IM))
     allocate (Diag%rain    (IM))
     allocate (Diag%rainc   (IM))
+    allocate (Diag%instant_precip_rate (IM))
+    allocate (Diag%instant_conv_precip_rate (IM))
     allocate (Diag%ice     (IM))
     allocate (Diag%snow    (IM))
     allocate (Diag%graupel (IM))
@@ -4411,6 +4415,8 @@ end subroutine overrides_create
     Diag%wind10mmax = zero
     Diag%rain    = zero
     Diag%rainc   = zero
+    Diag%instant_precip_rate = zero
+    Diag%instant_conv_precip_rate = zero
     Diag%ice     = zero
     Diag%snow    = zero
     Diag%graupel = zero

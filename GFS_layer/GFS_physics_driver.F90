@@ -3971,6 +3971,11 @@ module module_physics_driver
         enddo
       endif
 
+      do i = 1, im
+        Diag%instant_precip_rate(i) = Diag%rain(i) / (dtf*con_p001)
+        Diag%instant_conv_precip_rate(i) = Diag%rainc(i) / (dtf*con_p001)
+      end do
+
       deallocate (clw)
       deallocate (clw_trac_idx)
       if (Model%do_shoc) then
