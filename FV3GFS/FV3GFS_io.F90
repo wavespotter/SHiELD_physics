@@ -4585,7 +4585,7 @@ module FV3GFS_io_mod
     Diag(idx)%axes = 2
     Diag(idx)%name = 'rain'
     Diag(idx)%desc = 'total rain at this time step'
-    Diag(idx)%unit = 'XXX'
+    Diag(idx)%unit = 'm'
     Diag(idx)%mod_name = 'gfs_phys'
     allocate (Diag(idx)%data(nblks))
     do nb = 1,nblks
@@ -4596,11 +4596,34 @@ module FV3GFS_io_mod
     Diag(idx)%axes = 2
     Diag(idx)%name = 'rainc'
     Diag(idx)%desc = 'convective rain at this time step'
-    Diag(idx)%unit = 'XXX'
+    Diag(idx)%unit = 'm'
     Diag(idx)%mod_name = 'gfs_phys'
     allocate (Diag(idx)%data(nblks))
     do nb = 1,nblks
       Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%rainc(:)
+    enddo
+
+
+    idx = idx + 1
+    Diag(idx)%axes = 2
+    Diag(idx)%name = 'precip_rate'
+    Diag(idx)%desc = 'instantaneous precipitation rate at this time step'
+    Diag(idx)%unit = 'kg/m2/s'
+    Diag(idx)%mod_name = 'gfs_phys'
+    allocate (Diag(idx)%data(nblks))
+    do nb = 1,nblks
+      Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%rain(:)/Model%dtf * 1000.
+    enddo
+
+    idx = idx + 1
+    Diag(idx)%axes = 2
+    Diag(idx)%name = 'precipc_rate'
+    Diag(idx)%desc = 'instantaneous convective precipitation rate at this time step'
+    Diag(idx)%unit = 'kg/m2/s'
+    Diag(idx)%mod_name = 'gfs_phys'
+    allocate (Diag(idx)%data(nblks))
+    do nb = 1,nblks
+      Diag(idx)%data(nb)%var2 => Gfs_diag(nb)%rainc(:)/Model%dtf * 1000.
     enddo
 
     idx = idx + 1
