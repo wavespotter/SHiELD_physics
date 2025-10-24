@@ -933,6 +933,7 @@ module GFS_typedefs
     integer              :: iau_offset
     real(kind=kind_phys) :: iau_delthrs     ! iau time interval (to scale increments) in hours
     character(len=240)   :: iau_inc_files(7)! list of increment files
+    logical :: iau_on_cubed_sphere          ! True, if IAU files are on CS tiles; false, for Gausssian Grid IAU files
     character(len=32)    :: iau_forcing_var(20)  ! list of tracers with IAU forcing
     real(kind=kind_phys) :: iaufhrs(7)      ! forecast hours associated with increment files
     logical :: iau_filter_increments, iau_drymassfixer
@@ -2589,6 +2590,7 @@ end subroutine overrides_create
     !--- IAU options
     real(kind=kind_phys)  :: iau_delthrs      = 0           !< iau time interval (to scale increments)
     character(len=240)    :: iau_inc_files(7) = ''          !< list of increment files
+    logical :: iau_on_cubed_sphere            = .false.     ! True, if IAU files are on CS tiles; false, for Gausssian Grid IAU files
     character(len=32)     :: iau_forcing_var(20) = ''       !< list of tracers with IAU forcing
     real(kind=kind_phys)  :: iaufhrs(7)       = -1          !< forecast hours associated with increment files
     logical  :: iau_filter_increments         = .false.     !< filter IAU increments
@@ -2677,7 +2679,7 @@ end subroutine overrides_create
                                do_sppt, do_shum, do_skeb, do_sfcperts,                      &
                           !--- IAU
                                iau_delthrs,iaufhrs,iau_inc_files,iau_forcing_var,           &
-                               iau_filter_increments,iau_drymassfixer,                      &
+                               iau_filter_increments,iau_drymassfixer,iau_on_cubed_sphere,  &
                           !--- debug options
                                debug, pre_rad, do_ocean, use_ifs_ini_sst, use_ext_sst,      &
                                lprnt, landseaprt, &
@@ -3045,6 +3047,7 @@ end subroutine overrides_create
     !--- iau parameters
     Model%iaufhrs         = iaufhrs
     Model%iau_inc_files   = iau_inc_files
+    Model%iau_on_cubed_sphere = iau_on_cubed_sphere
     Model%iau_forcing_var = iau_forcing_var
     Model%iau_delthrs     = iau_delthrs
     Model%iau_filter_increments = iau_filter_increments
