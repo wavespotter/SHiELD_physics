@@ -216,8 +216,10 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: zorll  (:)   => null()  !< land surface roughness in cm
     real (kind=kind_phys), pointer :: charnock  (:)   => null()  !< Charnock parameter         ! Sofar added Spring 2023
     real (kind=kind_phys), pointer :: rhoa   (:)   => null()  !< surface air density in kg/m3  ! Sofar added 9/22/23
-    real (kind=kind_phys), pointer :: u10m   (:)   => null()  !< neutral U10 wind in m/s       ! Sofar added 11/17/23
-    real (kind=kind_phys), pointer :: v10m   (:)   => null()  !< neutral V10 wind in m/s       ! Sofar added 11/17/23
+    real (kind=kind_phys), pointer :: u10m   (:)   => null()  !< U10 wind in m/s       ! Sofar added 11/17/23
+    real (kind=kind_phys), pointer :: v10m   (:)   => null()  !< V10 wind in m/s       ! Sofar added 11/17/23
+    real (kind=kind_phys), pointer :: u100m   (:)   => null() !< U100 wind in m/s       ! Sofar added 11/17/23
+    real (kind=kind_phys), pointer :: v100m   (:)   => null() !< V100 wind in m/s       ! Sofar added 11/17/23
     real (kind=kind_phys), pointer :: u10n   (:)   => null()  !< neutral U10 wind in m/s       ! Sofar added 9/22/23
     real (kind=kind_phys), pointer :: v10n   (:)   => null()  !< neutral V10 wind in m/s       ! Sofar added 9/22/23
     real (kind=kind_phys), pointer :: ztrl   (:)   => null()  !< surface roughness for t and q in cm
@@ -680,6 +682,8 @@ module GFS_typedefs
     real(kind=kind_phys) :: alpha_stable    !< tuning parameter for the dimensionless momentum and scalar gradient function in the surface layer
     real(kind=kind_phys) :: alpha_unstable  !< tuning parameter for the dimensionless momentum gradient function in the surface layer
     logical              :: tune_ocean_surface_layer !< if true, use alphas above to modify the surface layer dimensionless gradients over oceans
+    logical              :: add_w_freeconv  !< add free convective velocity to wind speed in GFDL surface layer scheme
+    real(kind=kind_phys) :: gust_parameter  !< constant in the parameterization of the gust 
     logical              :: hybedmf         !< flag for hybrid edmf pbl scheme
     logical              :: myj_pbl         !< flag for NAM MYJ tke scheme
     logical              :: ysupbl          !< flag for ysu pbl scheme (version in WRFV3.8)
@@ -1304,6 +1308,10 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: runoff (:)    => null()   !< total water runoff
     real (kind=kind_phys), pointer :: ep     (:)    => null()   !< potential evaporation
     real (kind=kind_phys), pointer :: cldwrk (:)    => null()   !< cloud workfunction (valid only with sas)
+    real (kind=kind_phys), pointer :: gust10m (:)    => null()   !< 10-m wind gust m/s
+    real (kind=kind_phys), pointer :: gustmax10m(:) => null()   !< 10-m maximum wind gust m/s
+    real (kind=kind_phys), pointer :: gust100m (:)  => null()   !< 100-m wind gust m/s
+    real (kind=kind_phys), pointer :: gustmax100m(:)=> null()   !< 100-m maximum wind gust m/s
     real (kind=kind_phys), pointer :: dugwd  (:)    => null()   !< vertically integrated u change by OGWD
     real (kind=kind_phys), pointer :: dvgwd  (:)    => null()   !< vertically integrated v change by OGWD
     real (kind=kind_phys), pointer :: psmean (:)    => null()   !< surface pressure (kPa)
@@ -1316,6 +1324,8 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: wind10mmax(:) => null()   !< maximum wind speed
     real (kind=kind_phys), pointer :: rain   (:)    => null()   !< total rain at this time step
     real (kind=kind_phys), pointer :: rainc  (:)    => null()   !< convective rain at this time step
+    real (kind=kind_phys), pointer :: instant_precip_rate(:)              => null()   !< total instant. precip rate (kg/m2/s) at this time step
+    real (kind=kind_phys), pointer :: instant_conv_precip_rate(:)   => null()   !< convective instant. precip rate (kg/m2/s) at this time step
     real (kind=kind_phys), pointer :: ice    (:)    => null()   !< ice fall at this time step
     real (kind=kind_phys), pointer :: snow   (:)    => null()   !< snow fall at this time step
     real (kind=kind_phys), pointer :: graupel(:)    => null()   !< graupel fall at this time step
@@ -1329,6 +1339,8 @@ module GFS_typedefs
     ! Output - only in physics
     real (kind=kind_phys), pointer :: u10m   (:)    => null()   !< 10 meter u/v wind speed
     real (kind=kind_phys), pointer :: v10m   (:)    => null()   !< 10 meter u/v wind speed
+    real (kind=kind_phys), pointer :: u100m  (:)    => null()   !< 100 meter u/v wind speed
+    real (kind=kind_phys), pointer :: v100m  (:)    => null()   !< 100 meter u/v wind speed
     real (kind=kind_phys), pointer :: u10n   (:)    => null()   !< 10 meter u/v neutral wind speed !Sofar added 10/19/23
     real (kind=kind_phys), pointer :: v10n   (:)    => null()   !< 10 meter u/v neutral wind speed !Sofar added 10/19/23
     real (kind=kind_phys), pointer :: zol    (:)    => null()   !< Dimensionless surface layer stability
@@ -1349,6 +1361,8 @@ module GFS_typedefs
     real (kind=kind_phys), pointer :: v1     (:)    => null()   !< layer 1 merdional wind (m/s)
     real (kind=kind_phys), pointer :: chh    (:)    => null()   !< thermal exchange coefficient
     real (kind=kind_phys), pointer :: cmm    (:)    => null()   !< momentum exchange coefficient
+    real (kind=kind_phys), pointer :: fm10   (:)    => null()   !< 10 meter non-dimensional wind shear
+    real (kind=kind_phys), pointer :: cd     (:)    => null()   !< drag coefficient for momentum
     real (kind=kind_phys), pointer :: dlwsfci(:)    => null()   !< instantaneous sfc dnwd lw flux ( w/m**2 )
     real (kind=kind_phys), pointer :: ulwsfci(:)    => null()   !< instantaneous sfc upwd lw flux ( w/m**2 )
     real (kind=kind_phys), pointer :: dswsfci(:)    => null()   !< instantaneous sfc dnwd sw flux ( w/m**2 )
@@ -2404,7 +2418,9 @@ end subroutine overrides_create
     real(kind=kind_phys) :: wind_th_hwrf   = 33.                      !< wind speed threshold when z0 level off as in HWRF
     real(kind=kind_phys) :: alpha_stable   = 5.                       !< tuning parameter for the dimensionless momentum and scalar gradient function in the surface layer
     real(kind=kind_phys) :: alpha_unstable = 16.                      !< tuning parameter for the dimensionless momentum gradient function in the surface layer
+    real(kind=kind_phys) :: gust_parameter = 7.2                      !< constant in the gust parameterization 
     logical              :: tune_ocean_surface_layer = .false.        !< if true, use alphas above to modify the surface layer dimensionless gradients over oceans
+    logical              :: add_w_freeconv = .false.                  !< add free convective velocity to wind speed in GFDL surface layer scheme
     logical              :: hybedmf        = .false.                  !< flag for hybrid edmf pbl scheme
     logical              :: myj_pbl        = .false.                  !< flag for NAM MYJ tke-based scheme
     logical              :: ysupbl         = .false.                  !< flag for hybrid edmf pbl scheme
@@ -2638,9 +2654,9 @@ end subroutine overrides_create
                                ras, trans_trac, old_monin, cnvgwd, mstrat, moist_adj,       &
                                cscnv, cal_pre, do_aw, do_shoc, shocaftcnv, shoc_cld,        &
                                h2o_phys, pdfcld, shcnvcw, redrag, sfc_gfdl, z0s_max,        &
-                              do_z0_moon, do_z0_hwrf15, do_z0_hwrf17,                       &
+                               do_z0_moon, do_z0_hwrf15, do_z0_hwrf17,                      &
                                do_z0_hwrf17_hwonly, wind_th_hwrf, alpha_stable,             &
-                               alpha_unstable, tune_ocean_surface_layer,                    &
+                               alpha_unstable, tune_ocean_surface_layer, add_w_freeconv,    &
                                hybedmf, dspheat, lheatstrg, hour_canopy, afac_canopy,       &
                                cnvcld, no_pbl, xkzm_lim, xkzm_fac, xkgdx,                   &
                                rlmn, rlmx, zolcru, cs0,                                     &
@@ -2654,6 +2670,7 @@ end subroutine overrides_create
                                cs_parm, flgmin, cgwf, ccwf, cdmbgwd, sup, ctei_rm, crtrh,   &
                                dlqf,rbcr,mix_precip,orogwd,myj_pbl,ysupbl,satmedmf,         &
                                cap_k0_land,do_dk_hb19,cloud_gfdl,gwd_p_crit,                &
+                               gust_parameter,                                              &
                           !--- Rayleigh friction
                                prslrd0, ral_ts,                                             &
                           !--- mass flux deep convection
@@ -2882,7 +2899,9 @@ end subroutine overrides_create
     Model%wind_th_hwrf     = wind_th_hwrf
     Model%alpha_stable     = alpha_stable
     Model%alpha_unstable   = alpha_unstable
+    Model%gust_parameter   = gust_parameter
     Model%tune_ocean_surface_layer = tune_ocean_surface_layer
+    Model%add_w_freeconv   = add_w_freeconv
     Model%hybedmf          = hybedmf
     Model%myj_pbl          = myj_pbl
     Model%ysupbl           = ysupbl
@@ -3593,7 +3612,9 @@ end subroutine overrides_create
       print *, ' wind_th_hwrf      : ', Model%wind_th_hwrf
       print *, ' alpha_stable      : ', Model%alpha_stable
       print *, ' alpha_unstable    : ', Model%alpha_unstable
-      print *, ' tune_ocean_surface_layer : ', Model%tune_ocean_surface_layer 
+      print *, ' gust_parameter    : ', Model%gust_parameter
+      print *, ' tune_ocean_surface_layer : ', Model%tune_ocean_surface_layer
+      print *, ' add_w_freeconv    : ', Model%add_w_freeconv
       print *, ' hybedmf           : ', Model%hybedmf
       print *, ' myj_pbl           : ', Model%myj_pbl
       print *, ' ysupbl            : ', Model%ysupbl
@@ -4071,10 +4092,18 @@ end subroutine overrides_create
     allocate (Diag%spfhmin (IM))
     allocate (Diag%spfhmax (IM))
     allocate (Diag%u10mmax (IM))
+    allocate (Diag%fm10    (IM))
+    allocate (Diag%cd      (IM))
     allocate (Diag%v10mmax (IM))
-    allocate (Diag%wind10mmax (IM))
+    allocate (Diag%wind10mmax  (IM))
+    allocate (Diag%gust10m     (IM))
+    allocate (Diag%gustmax10m  (IM))
+    allocate (Diag%gust100m    (IM))
+    allocate (Diag%gustmax100m (IM))
     allocate (Diag%rain    (IM))
     allocate (Diag%rainc   (IM))
+    allocate (Diag%instant_precip_rate (IM))
+    allocate (Diag%instant_conv_precip_rate (IM))
     allocate (Diag%ice     (IM))
     allocate (Diag%snow    (IM))
     allocate (Diag%graupel (IM))
@@ -4086,6 +4115,8 @@ end subroutine overrides_create
     allocate (Diag%totgrpb (IM))
     allocate (Diag%u10m    (IM))
     allocate (Diag%v10m    (IM))
+    allocate (Diag%u100m   (IM))
+    allocate (Diag%v100m   (IM))
     allocate (Diag%u10n    (IM))  ! Sofar added: 10/19/13
     allocate (Diag%v10n    (IM))  ! Sofar added: 10/19/13
     allocate (Diag%zol     (IM))
@@ -4376,17 +4407,27 @@ end subroutine overrides_create
     Diag%spfhmin = huge
     Diag%spfhmax = zero
     Diag%u10mmax  = zero
+    Diag%gustmax10m  = zero
+    Diag%gustmax100m = zero
+    Diag%fm10     = zero
+    Diag%cd       = zero
     Diag%v10mmax  = zero
     Diag%wind10mmax = zero
     Diag%rain    = zero
     Diag%rainc   = zero
+    Diag%instant_precip_rate = zero
+    Diag%instant_conv_precip_rate = zero
     Diag%ice     = zero
     Diag%snow    = zero
     Diag%graupel = zero
 
     !--- Out
+    Diag%gust10m  = zero
+    Diag%gust100m = zero
     Diag%u10m    = zero
     Diag%v10m    = zero
+    Diag%u100m   = zero
+    Diag%v100m   = zero
     Diag%u10n    = zero  ! Sofar added: 10/19/23
     Diag%v10n    = zero  ! Sofar added: 10/19/23
     Diag%zol     = zero

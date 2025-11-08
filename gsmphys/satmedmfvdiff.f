@@ -36,7 +36,7 @@
      &     dspheat,dusfc,dvsfc,dtsfc,dqsfc,hpbl,
      &     kinver,xkzm_mo,xkzm_ho,xkzm_ml,xkzm_hl,xkzm_mi,xkzm_hi,
      &     xkzm_s,xkzinv,ck0_o,ce0_o, afrac_o,do_dk_hb19,xkzm_lim,xkgdx,
-     &     rlmn, rlmx, cap_k0_land, dkt_out,flux_uup,flux_vup,dku_out,
+     &     rlmn, rlmx, cap_k0_land, dkt_out, dku_out,flux_uup,flux_vup,
      &     alpha_stable, alpha_unstable, tune_ocean_surface_layer)
 !
       use machine  , only : kind_phys
@@ -797,18 +797,23 @@
 !
             if (islimsk(i) == 0) then
               ckz(i,k) = ck1 + (ck0_o-ck1)*exp(ptem)
+              ckz(i,k) = min(ckz(i,k),ck0_o)
+              ckz(i,k) = max(ckz(i,k),ck1)
             else
-              ckz(i,k) = ck1 + (ck0_o-ck1)*exp(ptem)
+              ckz(i,k) = ck1 + (ck0-ck1)*exp(ptem)
+              ckz(i,k) = min(ckz(i,k),ck0)
+              ckz(i,k) = max(ckz(i,k),ck1)
             end if
-            ckz(i,k) = min(ckz(i,k),ck0)
-            ckz(i,k) = max(ckz(i,k),ck1)
+           
             if (islimsk(i) == 0) then
               chz(i,k) = ch1 + (ch0_o-ch1)*exp(ptem)
+              chz(i,k) = min(chz(i,k),ch0_o)
+              chz(i,k) = max(chz(i,k),ch1)
             else
               chz(i,k) = ch1 + (ch0-ch1)*exp(ptem)
+              chz(i,k) = min(chz(i,k),ch0)
+              chz(i,k) = max(chz(i,k),ch1)
             end if
-            chz(i,k) = min(chz(i,k),ch0)
-            chz(i,k) = max(chz(i,k),ch1)
           endif
         enddo
       enddo

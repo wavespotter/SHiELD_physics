@@ -9,7 +9,7 @@
       ! Christie Hegermiller, Sofar Ocean
 
       subroutine sfc_diff_gfdl(im,ps,u1,v1,t1,q1,z1,
-     &                    snwdph,tskin,z0rl,ztrl,cm,ch,rb,
+     &                    snwdph,tskin,qss,z0rl,ztrl,cm,ch,rb,
      &                    prsl1,prslki,islimsk,
      &                    stress,fm,fh,
      &                    charnock,                                                           
@@ -21,7 +21,8 @@
      &                    do_z0_moon, do_z0_hwrf15, do_z0_hwrf17,
      &                    do_z0_hwrf17_hwonly, wind_th_hwrf, 
      &                    alpha_stable, alpha_unstable,
-     &                    tune_ocean_surface_layer, zol)
+     &                    tune_ocean_surface_layer, zol, 
+     &                    add_w_freeconv)
 
 ! oct 2019 - a clean and updated version by Kun Gao at GFDL (Kun.Gao@noaa.gov)
 
@@ -39,18 +40,18 @@
 
       real(kind=kind_phys), dimension(im)::ps,  u1, v1, t1, q1, z1
      &,                                    tskin, z0rl, ztrl, cm, ch, rb
-     &,                                    prsl1, prslki, stress
+     &,                                    prsl1, prslki, stress, qss
      &,                                    fm, fh
      &,                                    charnock                     ! Sofar added Spring 2023
-     &,                                    ustar, wind 
+     &,                                    ustar, wind, w_conv 
      &,                                    ddvel
      &,                                    fm10, fh2, sigmaf, shdmax
      &,                                    tsurf, snwdph
-     &,                                    fm_neutral, fm10_neutral, zol! Sofar added Spring 2023
+     &,                                    fm_neutral, fm10_neutral, zol
       real(kind=kind_phys) :: ws1, ws10n, alpha_stable, alpha_unstable  ! Sofar added 10/19/23
       integer, dimension(im)             ::vegtype, islimsk
 
-      logical   flag_iter(im), tune_ocean_surface_layer
+      logical   flag_iter(im), tune_ocean_surface_layer, add_w_freeconv
       logical   redrag        
       logical   do_z0_moon, do_z0_hwrf15, do_z0_hwrf17 ! kgao 
      &,         do_z0_hwrf17_hwonly                    ! kgao 
@@ -66,7 +67,8 @@
      &                     hl110,  hlt,    hltinf, olinf,
      &                     restar, czilc,  tem1,   tem2,
      &                     u10m, v10m, ws10m, ws10m_moon,         !kgao
-     &                     z0_1, zt_1, fm1, fh1, ustar_1, ztmax_1 !kgao
+     &                     z0_1, zt_1, fm1, fh1, ustar_1, ztmax_1,!kgao
+     &                     th1, dt1, dq1
 !
 
       real(kind=kind_phys),intent(in   ) :: z0s_max, wind_th_hwrf ! kgao 
@@ -87,14 +89,26 @@
         if(flag_iter(i)) then 
  
 ! --- get variables at model lowest layer and surface (water/ice/land) 
-
-          wind(i) = max(sqrt(u1(i)*u1(i) + v1(i)*v1(i))
-     &                + max(0.0, min(ddvel(i), 30.0)), 1.0)
+       
+          wind(i) = sqrt(u1(i)*u1(i) + v1(i)*v1(i))
           tem1    = 1.0 + rvrdm1 * max(q1(i),1.e-8)
+          th1     = t1(i) * prslki(i)
           thv1    = t1(i) * prslki(i) * tem1
           tvs     = 0.5 * (tsurf(i)+tskin(i)) * tem1
           qs1     = fpvs(t1(i))
           qs1     = max(1.0e-8, eps * qs1 / (prsl1(i) + epsm1 * qs1))
+
+          ! update wind speed with free convective velocity
+          if (add_w_freeconv) then
+            dt1 = th1 - tskin(i)
+            dq1 = qs1 - qss(i)
+            call compute_w_freeconv(th1, dt1, dq1, ustar(i), 
+     &            fh(i), w_conv(i))
+            wind(i) = sqrt(wind(i) * wind(i) + w_conv(i) * w_conv(i))
+          end if
+          
+          ! update wind speed with convective downdraft velocity
+          wind(i) = max(wind(i) + max(0.0, min(ddvel(i), 30.0)), 1.0)
 
           !(sea/land/ice mask =0/1/2)
           if(islimsk(i) == 1 .or. islimsk(i) == 2) then ! over land or sea ice 
@@ -162,6 +176,7 @@
 
             ztmax  = max(ztmax,1.0e-6)
 
+
 ! --- call similarity
 
             call monin_obukhov_similarity
@@ -169,7 +184,7 @@
      &        ztmax, tvs,
      &        alpha_stable, alpha_unstable, tune_ocean_surface_layer,
      &        rb(i), fm(i), fh(i), fm10(i), fh2(i),
-     &        fm_neutral(i), fm10_neutral(i),                          !(ADDED by Sofar)
+     &        fm_neutral(i), fm10_neutral(i),
      &        cm(i), ch(i), stress(i), ustar(i), zol(i))
 
           elseif (islimsk(i) == 0) then ! over water
@@ -617,6 +632,7 @@
               fhs    = fh - ph
               hl1    = fms * fms * rb / fhs
               hl1    = min(max(hl1, ztmin1), ztmax1)
+              zol     = hl1
             endif
 !
 !  second iteration
@@ -648,6 +664,7 @@
             if(abs(olinf) <= tem1) then
               hlinf = -z1 / tem1
               hlinf = min(max(hlinf,ztmin1),ztmax1)
+              zol     = hlinf
             endif
 !
 !  get pm and ph
@@ -728,4 +745,46 @@
         psi_m = log((1. + Rz)**2. * (1. + Rz**2.) / ((1. + R0)**2.
      &  *(1. + R0**2.))) + 2. * atan(R0) - 2. * atan(Rz)
         return
+      end subroutine
+
+      subroutine compute_w_freeconv(t1, dt1, dq1, ustar, fh, w_conv)
+        ! This routine computes the free convection velocity scale
+        ! following the equation
+        ! w_conv = (H g/T * Q)^(1/3)
+        ! see, e.g., Eq 3.20 in IFS physics doc cycle Cy49r1
+        ! with Q the kinematic surface enthalpy flux which 
+        ! is taken from the previous step
+
+        ! inputs:
+        ! t1: pot. temperature at lowest model level (K)
+        ! dt1: pot. temperature difference between surface and lowest model level
+        ! dq1: spec. humidity difference between surface and lowest model level
+        ! ustar: friction velocity
+        ! fh: Similarity function for heat at lowest model level
+
+        ! outputs:
+        ! w_conv: free convection velocity scale (m/s)
+
+
+        use machine , only : kind_phys
+        use physcons, grav => con_g, rvrdm1 => con_fvirt
+        implicit none
+        real(kind=kind_phys),intent(in) :: t1, dt1, dq1, ustar, fh
+        real(kind=kind_phys),intent(out) :: w_conv
+        real(kind=kind_phys), parameter :: kappa = 0.4, H = 1000.
+        real(kind_phys) :: tstar, qstar, flux
+
+        ! compute surface flux using velocity, temperature, and humidity scales
+        ! temp and humidity scales can be expressed as 
+        ! C_H / sqrt(C_M) dt1 and C_H / sqrt(C_M) dq1 which equals
+        ! kappa / fh * dt1 and kappa / fh * dq1, respectively,
+        ! with fh, surface T and surface qs from the previous time step.
+      
+        tstar = kappa / fh * dt1
+        qstar = kappa / fh * dq1
+        flux = ustar * tstar + rvrdm1 * t1 * ustar * qstar  ! kinematic enthalpy flux (K m/s)
+
+        if (flux < 0.) flux = 0.  ! ensure w_conv is zero if not unstable
+        w_conv = ( H * (grav/t1) * flux )**(1./3.)
+
       end subroutine

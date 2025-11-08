@@ -1196,20 +1196,21 @@ module module_physics_driver
 ! a new and more flexible version of sfc_diff by kgao
             call sfc_diff_gfdl(im,Statein%pgr, Statein%ugrs, Statein%vgrs,&
                  Statein%tgrs, Statein%qgrs, Diag%zlvl, Sfcprop%snowd, &
-                 Sfcprop%tsfc, Sfcprop%zorl, Sfcprop%ztrl, cd,      &
+                 Sfcprop%tsfc, Sfcprop%qsfc, Sfcprop%zorl, Sfcprop%ztrl, cd,      &
                  cdq, rb, Statein%prsl(1,1), work3, islmsk, stress, &
                  Sfcprop%ffmm,  Sfcprop%ffhh,                       &
                  Sfcprop%charnock,                                  &              
                  fm10_neutral,                                      &  
                  Sfcprop%uustar,                                    &
-                 wind,  Tbd%phy_f2d(1,Model%num_p2d), fm10, fh2,    &
+                 wind,  Tbd%phy_f2d(1,Model%num_p2d), Diag%fm10, fh2,    &
                  sigmaf, vegtype, Sfcprop%shdmax, Model%ivegsrc,    &
                  tsurf, flag_iter, Model%redrag, Model%z0s_max,     &
                  Model%do_z0_moon, Model%do_z0_hwrf15,              &
                  Model%do_z0_hwrf17, Model%do_z0_hwrf17_hwonly,     &
                  Model%wind_th_hwrf,                                &
                  Model%alpha_stable, Model%alpha_unstable,          &
-                 Model%tune_ocean_surface_layer, Diag%zol)
+                 Model%tune_ocean_surface_layer, Diag%zol,          & 
+                 Model%add_w_freeconv)
             else
 ! GFS original sfc_diff modified by kgao 
             call sfc_diff (im,Statein%pgr, Statein%ugrs, Statein%vgrs,&
@@ -1217,7 +1218,7 @@ module module_physics_driver
                  Sfcprop%snowd, Sfcprop%tsfc,  Sfcprop%zorl, cd,    &
                  cdq, rb, Statein%prsl(1,1), work3, islmsk, stress, &
                  Sfcprop%ffmm,  Sfcprop%ffhh, Sfcprop%uustar,       &
-                 wind,  Tbd%phy_f2d(1,Model%num_p2d), fm10, fh2,    &
+                 wind,  Tbd%phy_f2d(1,Model%num_p2d), Diag%fm10, fh2,    &
                  sigmaf, vegtype, Sfcprop%shdmax, Model%ivegsrc,    &
                  tsurf, flag_iter, Model%redrag, Model%czil_sfc,    &
                  Model%z0s_max,     &
@@ -1226,6 +1227,7 @@ module module_physics_driver
                  Model%wind_th_hwrf, Diag%zol)
             endif
             Diag%rb = rb
+            Diag%cd = cd
          !endif
 
          !endif
@@ -1484,11 +1486,31 @@ module module_physics_driver
               Statein%tgrs, Statein%qgrs, Sfcprop%tsfc, qss,   &
               Sfcprop%f10m, Diag%u10m, Diag%v10m,        &
               Sfcprop%t2m, Sfcprop%q2m, work3, evap,           &
-              Sfcprop%ffmm, Sfcprop%ffhh, fm10, fh2, &
+              Sfcprop%ffmm, Sfcprop%ffhh, Diag%fm10, fh2, &
               Sfcprop%u10m, Sfcprop%v10m,&
               fm10_neutral, Diag%u10n, Diag%v10n, &
               Sfcprop%u10n, Sfcprop%v10n, Sfcprop%rhoa)  
       !endif
+      ! get 100-m wind components using linear interpolation same as in FV3, then get wind gust at 10 and 100 m
+      call interpolate_z(im, levs, 100., Statein%phii, Statein%ugrs, Diag%u100m)
+      call interpolate_z(im, levs, 100., Statein%phii, Statein%vgrs, Diag%v100m)
+      call compute_gust(im, Diag%u10m, Diag%v10m, Sfcprop%uustar, &
+            Diag%zol, Diag%zlvl, Model%gust_parameter, &
+            Diag%gust10m)
+      call compute_gust(im, Diag%u100m, Diag%v100m, Sfcprop%uustar, &
+            Diag%zol, Diag%zlvl, Model%gust_parameter, &
+            Diag%gust100m)
+      do i=1, im
+           !find max wind gusts
+           tem = Diag%gust10m(i)
+           if (tem > Diag%gustmax10m(i)) then
+              Diag%gustmax10m(i) = tem
+           endif
+           tem = Diag%gust100m(i)
+           if (tem > Diag%gustmax100m(i)) then
+              Diag%gustmax100m(i) = tem
+           endif
+      end do
 
       Tbd%phy_f2d(:,Model%num_p2d) = 0.0
 
@@ -3850,7 +3872,7 @@ module module_physics_driver
                        Stateout%gt0, Stateout%gq0, Sfcprop%tsfc, qss,   &
                        Sfcprop%f10m, Diag%u10m, Diag%v10m, Sfcprop%t2m, &
                        Sfcprop%q2m, work3, evap, Sfcprop%ffmm,          &
-                       Sfcprop%ffhh, fm10, fh2, &
+                       Sfcprop%ffhh, Diag%fm10, fh2, &
                        Sfcprop%u10m, Sfcprop%v10m,&
                        fm10_neutral, Diag%u10n, Diag%v10n, &
                        Sfcprop%u10n, Sfcprop%v10n, Sfcprop%rhoa)  
@@ -3948,6 +3970,11 @@ module module_physics_driver
           endif
         enddo
       endif
+
+      do i = 1, im
+        Diag%instant_precip_rate(i) = Diag%rain(i) / (dtf*con_p001)
+        Diag%instant_conv_precip_rate(i) = Diag%rainc(i) / (dtf*con_p001)
+      end do
 
       deallocate (clw)
       deallocate (clw_trac_idx)
@@ -4322,6 +4349,46 @@ module module_physics_driver
       enddo
 
   end subroutine compute_diagnostics_with_scaled_co2
+
+  subroutine interpolate_z(im, km, zl, phi, a3_in, a2)
+    use physcons, only: con_g
+    implicit none
+    integer,  intent(in):: im, km
+    real, intent(in):: phi(im,km+1) ! phi(k+1) > phi(k)
+    real, intent(in):: a3_in(im,km) 
+    real, intent(in):: zl
+    real, intent(out):: a2(im)
+    ! local:
+    real hght(im,km+1), a3(im, km) ! hght(k) > hght(k+1)
+    real zm(km)
+    integer i,k
+
+    ! flip z and a3
+    do k=1,km+1
+      do i=1,im
+        hght(i,k) = phi(i,km+2-k) / con_g
+        if (k <= km) a3(i,k) = a3_in(i,km+1-k)
+      enddo
+    enddo
+
+    do i=1,im
+      do k=1,km
+        zm(k) = 0.5*(hght(i,k)+hght(i,k+1))
+      enddo
+      if( zl >= zm(1) ) then
+        a2(i) = a3(i,1)
+      elseif ( zl <= zm(km) ) then
+        a2(i) = a3(i,km)
+      else
+        do k=1,km-1
+          if( zl <= zm(k) .and. zl >= zm(k+1) ) then
+            a2(i) = a3(i,k) + (a3(i,k+1)-a3(i,k))*(zm(k)-zl)/(zm(k)-zm(k+1))
+            exit
+          endif
+        enddo
+      endif
+    end do
+ end subroutine interpolate_z
 !> @}
 
 end module module_physics_driver
